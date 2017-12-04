@@ -295,8 +295,8 @@ function makeEllipsoid(currEllipsoid,numLongSteps) {
                     //    latY * 0.5 + 0.5);
                     ellipsoidTextures.push(longAngle/(2*Math.PI), (latLimitAngle + latAngle) / (2 * latLimitAngle));//latAngle/Math.PI + 0.5);
                 }
-                ellipsoidVertices.push(latRadius*Math.sin(0),latY,latRadius*Math.cos(0));
-                ellipsoidTextures.push(1, latAngle/Math.PI + 0.5);
+                //ellipsoidVertices.push(latRadius*Math.sin(0),latY,latRadius*Math.cos(0));
+                //ellipsoidTextures.push(1, latAngle/Math.PI + 0.5);
             } // end for each latitude
             ellipsoidVertices.push(0,1,0); // add north pole
             ellipsoidTextures.push(0, 1);
