@@ -56,9 +56,9 @@ var viewDelta = 0; // how much to displace view with each key press
 
 // textures
 var textures = new Array()  // array for holding textures, [tag: '', src: '', texture: WebGLTexture]
-var pngs = ['abe', 'leaf.small', 'tree', 'shot', 'stars', 'reticle']
-var jpgs = ['billie', 'retro', 'rocktile', 'sky', 'earth', 'sun', 'deathstar']
-var gifs = ['glass']
+var pngs = ['shot', 'stars', 'reticle']
+var jpgs = ['earth', 'sun', 'deathstar']
+var gifs = []
 
 // game variables
 var lifespan = 50;
@@ -376,7 +376,7 @@ function generateShot(origin) {
     ellipsoid.specular = [0.5, 0.5, 0.5];
     ellipsoid.n = 7;
     ellipsoid.alpha = 1;
-    ellipsoid.texture = "rocktile.jpg";
+    ellipsoid.texture = "shot.png";
     ellipsoid.center = vec3.fromValues(ellipsoid.x,ellipsoid.y,ellipsoid.z);
     ellipsoid.on = false;
     ellipsoid.tag = 'shot';
