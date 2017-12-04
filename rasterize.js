@@ -56,8 +56,8 @@ var viewDelta = 0; // how much to displace view with each key press
 
 // textures
 var textures = new Array()  // array for holding textures, [tag: '', src: '', texture: WebGLTexture]
-var pngs = ['abe', 'leaf.small', 'tree', 'shot', 'reticle']
-var jpgs = ['billie', 'retro', 'rocktile', 'sky', 'stars', 'earth', 'sun']
+var pngs = ['abe', 'leaf.small', 'tree', 'shot', 'stars', 'reticle']
+var jpgs = ['billie', 'retro', 'rocktile', 'sky', 'earth', 'sun']
 var gifs = ['glass']
 
 // game variables
@@ -512,26 +512,7 @@ function loadModels() {
                     ellipsoid.center = vec3.fromValues(ellipsoid.x,ellipsoid.y,ellipsoid.z); // locate ellipsoid ctr
                     ellipsoid.tag = 'null';
                     ellipsoid.longevity = 0;
-
-                    if (whichEllipsoid == 0) {
-                        ellipsoid.center = vec3.fromValues(0, 0, 0);
-                        ellipsoid.x = 0;
-                        ellipsoid.y = 0;
-                        ellipsoid.z = 0;
-                        ellipsoid.a = 0.5
-                        ellipsoid.b = 0.5;
-                        ellipsoid.c = 0.5;
-                    }
-                    if (whichEllipsoid == 2) {
-                        ellipsoid.center = vec3.fromValues(0, 0, 0);
-                        ellipsoid.x = 0;
-                        ellipsoid.y = 0;
-                        ellipsoid.z = 0;
-                        ellipsoid.a = 10;
-                        ellipsoid.b = 10;
-                        ellipsoid.c = 10;
-                        ellipsoid.alpha = 1;
-                    }
+                    
                     vec3.set(minXYZ,ellipsoid.x-ellipsoid.a,ellipsoid.y-ellipsoid.b,ellipsoid.z-ellipsoid.c); 
                     vec3.set(maxXYZ,ellipsoid.x+ellipsoid.a,ellipsoid.y+ellipsoid.b,ellipsoid.z+ellipsoid.c); 
                     vec3.min(minCorner,minCorner,minXYZ); // update world bbox min corner
