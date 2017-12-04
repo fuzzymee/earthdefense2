@@ -62,6 +62,8 @@ var gifs = []
 
 // game variables
 var lifespan = 50;
+var timer = 0;
+var spawn = 10;
 
 // ASSIGNMENT HELPER FUNCTIONS
 
@@ -351,6 +353,11 @@ function makeEllipsoid(currEllipsoid,numLongSteps) {
         console.log(e);
     } // end catch
 } // end make ellipsoid
+
+// create Asteroid
+function generateAsteroid() {
+
+}
 
 //function for generating the shot
 function generateShot(origin) {
@@ -809,6 +816,34 @@ function updateModels() {
             }
         }
     }
+    for (var m in inputTranslucent) {
+        if (inputTranslucent[m] !== undefined) {
+            if (inputTranslucent[m].tag == 'shot') {
+                // move forward along z some amount
+                // update longevity
+                vec3.add(inputTranslucent[m].translation, inputTranslucent[m].translation, vec3.scale(vec3.create(),
+                    inputTranslucent[m].direction, 0.1));
+                inputTranslucent[m].longevity++;
+                if (inputTranslucent[m].longevity > lifespan) {
+                    // delete inputOpaque[m]
+                    deleteModel(inputTranslucent[m]);
+                }
+            }
+        }
+    }
+}
+
+function spawnAsteroid() {
+    
+}
+
+function updateAsteroids() {
+    timer++;
+    if (timer >= spawn) {
+        spawnAsteroid();
+        timer = 0;
+        spawn = Math.floor(Math.random() * (10 - 5 + 1) + 5);   // set spawn to random number between 5 and 10
+    }
 }
 
 // render the models sorted by model depth
@@ -816,6 +851,9 @@ function renderModelsSorted() {
 
     // update models
     updateModels();
+
+    // tick asteroids
+    updateAsteroids();
 
     // construct the model transform matrix, based on model state
     function makeModelTransform(currModel) {
