@@ -57,13 +57,18 @@ var viewDelta = 0; // how much to displace view with each key press
 // textures
 var textures = new Array()  // array for holding textures, [tag: '', src: '', texture: WebGLTexture]
 var pngs = ['shot', 'stars', 'reticle']
-var jpgs = ['earth', 'sun', 'deathstar']
+var jpgs = ['asteroid', 'earth', 'sun', 'deathstar']
 var gifs = []
 
 // game variables
 var lifespan = 50;
 var timer = 0;
 var spawn = 10;
+var station_centers = [
+    [0, 0, 1],
+    [-0.7, 0, -0.7],
+    [0.7, 0, -0.7]
+];
 
 // ASSIGNMENT HELPER FUNCTIONS
 
@@ -418,7 +423,7 @@ function generateShot(origin) {
     triangleBuffers.push(gl.createBuffer()); // init empty triangle index buffer
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, triangleBuffers[triangleBuffers.length-1]); // activate that buffer
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(ellipsoidModel.triangles),gl.STATIC_DRAW); // data in
-} // end for each ellipsoid
+}
 
 // read models in, load them into webgl buffers
 function loadModels() {
@@ -833,8 +838,83 @@ function updateModels() {
     }
 }
 
+function getSpotOnSphere(x, y, z, radius) {
+    var u = Math.random();
+    var v = Math.random();
+    var theta = 2 * Math.PI * u;
+    var phi = Math.acos(2 * v - 1);
+    var xx = x + (radius * Math.sin(phi) * Math.cos(theta));
+    var yy = y + (radius * Math.sin(phi) * Math.sin(theta));
+    var zz = z + (radius * Math.cos(phi));
+    return [xx, yy, zz];
+}
+
+function getAsteroidTarget(spawnLocation) {
+    var closest = null;
+    var dist = 0;
+    var temp = 0;
+    for (t in station_centers) {
+        temp = vec3.distance(vec3.fromValues(spawnLocation[0], spawnLocation[1], spawnLocation[2]),
+            vec3.fromValues(station_centers[t][0], station_centers[t][1], station_centers[t][2]));
+        if (temp > dist) {
+            dist = temp;
+            closest = station_centers[t];
+        }
+    }
+    return closest;
+}
+
 function spawnAsteroid() {
-    
+    var spawnLocation = getSpotOnSphere(0, 0, 0, 10);
+    var target = getAsteroidTarget(spawnLocation);
+    console.log("spawn: " + spawnLocation);
+    console.log("target: " + target);
+
+    //
+    var ellipsoid = {};
+    ellipsoid.x = spawnLocation[0]; ellipsoid.y = spawnLocation[1]; ellipsoid.z = spawnLocation[2];
+    ellipsoid.a = 0.1; ellipsoid.b = 0.1; ellipsoid.c = 0.1;
+    ellipsoid.translation = vec3.fromValues(0,0,0); // ellipsoids begin without translation
+    ellipsoid.xAxis = vec3.fromValues(1,0,0); // ellipsoid X axis
+    ellipsoid.yAxis = vec3.fromValues(0,1,0); // ellipsoid Y axis 
+    ellipsoid.center = vec3.fromValues(ellipsoid.x,ellipsoid.y,ellipsoid.z); // locate ellipsoid ctr
+    ellipsoid.ambient = [0.5, 0.5, 0.5];
+    ellipsoid.diffuse = [0.5, 0.5, 0.5];
+    ellipsoid.specular = [0.5, 0.5, 0.5];
+    ellipsoid.n = 7;
+    ellipsoid.alpha = 1;
+    ellipsoid.texture = "asteroid.jpg";
+    ellipsoid.on = false;
+    ellipsoid.tag = 'asteroid';
+    ellipsoid.longevity = 0;
+    ellipsoid.direction = vec3.subtract(vec3.create(), vec3.fromValues(target[0], target[1], target[2]),
+        vec3.fromValues(ellipsoid.x, ellipsoid.y, ellipsoid.z));
+
+    ellipsoidModel = makeEllipsoid(ellipsoid,32);
+    ellipsoid.glNormals = ellipsoidModel.normals;
+    ellipsoid.glVertices = ellipsoidModel.vertices;
+    ellipsoid.glTextures = ellipsoidModel.textures;
+    ellipsoid.glTriangles = ellipsoidModel.triangles;
+
+    inputEllipsoids.push(ellipsoid);
+
+    // send the ellipsoid vertex coords and normals to webGL
+    vertexBuffers.push(gl.createBuffer()); // init empty webgl ellipsoid vertex coord buffer
+    gl.bindBuffer(gl.ARRAY_BUFFER,vertexBuffers[vertexBuffers.length-1]); // activate that buffer
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(ellipsoidModel.vertices),gl.STATIC_DRAW); // data in
+    normalBuffers.push(gl.createBuffer()); // init empty webgl ellipsoid vertex normal buffer
+    gl.bindBuffer(gl.ARRAY_BUFFER,normalBuffers[normalBuffers.length-1]); // activate that buffer
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(ellipsoidModel.normals),gl.STATIC_DRAW); // data in
+    textureBuffers.push(gl.createBuffer()); // init empty webgl ellipsoid texture coord buffer
+    gl.bindBuffer(gl.ARRAY_BUFFER,textureBuffers[textureBuffers.length-1]); // activate that buffer
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(ellipsoidModel.textures),gl.STATIC_DRAW); // data in
+
+    triSetSizes.push(ellipsoidModel.triangles.length);
+
+    // send the triangle indices to webGL
+    triangleBuffers.push(gl.createBuffer()); // init empty triangle index buffer
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, triangleBuffers[triangleBuffers.length-1]); // activate that buffer
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(ellipsoidModel.triangles),gl.STATIC_DRAW); // data in
 }
 
 function updateAsteroids() {
@@ -842,7 +922,7 @@ function updateAsteroids() {
     if (timer >= spawn) {
         spawnAsteroid();
         timer = 0;
-        spawn = Math.floor(Math.random() * (10 - 5 + 1) + 5);   // set spawn to random number between 5 and 10
+        spawn = Math.floor(Math.random() * (100 - 70 + 1) + 100);   // set spawn to random number between 5 and 10
     }
 }
 
