@@ -299,7 +299,7 @@ function makeEllipsoid(currEllipsoid,numLongSteps) {
                 ellipsoidTextures.push(1, latAngle/Math.PI + 0.5);
             } // end for each latitude
             ellipsoidVertices.push(0,1,0); // add north pole
-            ellipsoidTextures.push(1, 1);
+            ellipsoidTextures.push(0, 1);
             ellipsoidVertices = ellipsoidVertices.map(function(val,idx) { // position and scale ellipsoid
                 switch (idx % 3) {
                     case 0: // x
