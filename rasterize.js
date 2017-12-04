@@ -56,7 +56,7 @@ var viewDelta = 0; // how much to displace view with each key press
 
 // textures
 var textures = new Array()  // array for holding textures, [tag: '', src: '', texture: WebGLTexture]
-var pngs = ['abe', 'earth', 'leaf.small', 'tree']
+var pngs = ['abe', 'earth', 'leaf.small', 'tree', 'reticle']
 var jpgs = ['billie', 'retro', 'rocktile', 'sky', 'stars']
 var gifs = ['glass']
 
