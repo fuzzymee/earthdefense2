@@ -293,7 +293,7 @@ function makeEllipsoid(currEllipsoid,numLongSteps) {
                     ellipsoidVertices.push(latRadius*Math.sin(longAngle),latY,latRadius*Math.cos(longAngle));
                     //ellipsoidTextures.push(Math.atan2(latRadius*Math.sin(longAngle), latRadius*Math.cos(longAngle)) / (2*Math.PI) + 0.5,
                     //    latY * 0.5 + 0.5);
-                    ellipsoidTextures.push(longAngle/(2*Math.PI), latAngle/Math.PI + 0.5);
+                    ellipsoidTextures.push(longAngle/(2*Math.PI), (latLimitAngle + latAngle) / (2 * latLimitAngle));//latAngle/Math.PI + 0.5);
                 }
                 ellipsoidVertices.push(latRadius*Math.sin(0),latY,latRadius*Math.cos(0));
                 ellipsoidTextures.push(1, latAngle/Math.PI + 0.5);
@@ -512,7 +512,7 @@ function loadModels() {
                     ellipsoid.center = vec3.fromValues(ellipsoid.x,ellipsoid.y,ellipsoid.z); // locate ellipsoid ctr
                     ellipsoid.tag = 'null';
                     ellipsoid.longevity = 0;
-                    
+
                     vec3.set(minXYZ,ellipsoid.x-ellipsoid.a,ellipsoid.y-ellipsoid.b,ellipsoid.z-ellipsoid.c); 
                     vec3.set(maxXYZ,ellipsoid.x+ellipsoid.a,ellipsoid.y+ellipsoid.b,ellipsoid.z+ellipsoid.c); 
                     vec3.min(minCorner,minCorner,minXYZ); // update world bbox min corner
