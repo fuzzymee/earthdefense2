@@ -65,9 +65,9 @@ var lifespan = 50;
 var timer = 0;
 var spawn = 10;
 var station_centers = [
-    [0, 0, 0.25],
-    [-0.175, 0, -0.175],
-    [0.175, 0, -0.175]
+    [0, 0, 0.5],
+    [-0.35, 0, -0.35],
+    [0.35, 0, -0.35]
 ];
 
 // ASSIGNMENT HELPER FUNCTIONS
