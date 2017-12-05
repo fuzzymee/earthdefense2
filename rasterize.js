@@ -65,9 +65,9 @@ var lifespan = 50;
 var timer = 0;
 var spawn = 10;
 var station_centers = [
-    [0, 0, 1],
-    [-0.7, 0, -0.7],
-    [0.7, 0, -0.7]
+    [0, 0, 0.25],
+    [-0.175, 0, -0.175],
+    [0.175, 0, -0.175]
 ];
 
 // ASSIGNMENT HELPER FUNCTIONS
@@ -819,6 +819,14 @@ function updateModels() {
                     deleteModel(inputOpaque[m]);
                 }
             }
+            if (inputOpaque[m].tag == 'asteroid') {
+                vec3.add(inputOpaque[m].translation, inputOpaque[m].translation, vec3.scale(vec3.create(), inputOpaque[m].direction, 0.0005));
+                inputOpaque[m].longevity += 0.0005;
+                if (inputOpaque[m].longevity > lifespan) {
+                    // delete inputOpaque[m]
+                    deleteModel(inputOpaque[m]);
+                }
+            }
         }
     }
     for (var m in inputTranslucent) {
@@ -851,12 +859,12 @@ function getSpotOnSphere(x, y, z, radius) {
 
 function getAsteroidTarget(spawnLocation) {
     var closest = null;
-    var dist = 0;
+    var dist = 100;
     var temp = 0;
     for (t in station_centers) {
-        temp = vec3.distance(vec3.fromValues(spawnLocation[0], spawnLocation[1], spawnLocation[2]),
-            vec3.fromValues(station_centers[t][0], station_centers[t][1], station_centers[t][2]));
-        if (temp > dist) {
+        temp = vec3.length(vec3.subtract(vec3.create(), vec3.fromValues(station_centers[t][0], station_centers[t][1], station_centers[t][2]),
+            vec3.fromValues(spawnLocation[0], spawnLocation[1], spawnLocation[2])));
+        if (temp < dist) {
             dist = temp;
             closest = station_centers[t];
         }
@@ -873,7 +881,7 @@ function spawnAsteroid() {
     //
     var ellipsoid = {};
     ellipsoid.x = spawnLocation[0]; ellipsoid.y = spawnLocation[1]; ellipsoid.z = spawnLocation[2];
-    ellipsoid.a = 0.1; ellipsoid.b = 0.1; ellipsoid.c = 0.1;
+    ellipsoid.a = 0.02; ellipsoid.b = 0.02; ellipsoid.c = 0.02;
     ellipsoid.translation = vec3.fromValues(0,0,0); // ellipsoids begin without translation
     ellipsoid.xAxis = vec3.fromValues(1,0,0); // ellipsoid X axis
     ellipsoid.yAxis = vec3.fromValues(0,1,0); // ellipsoid Y axis 
@@ -922,7 +930,7 @@ function updateAsteroids() {
     if (timer >= spawn) {
         spawnAsteroid();
         timer = 0;
-        spawn = Math.floor(Math.random() * (100 - 70 + 1) + 100);   // set spawn to random number between 5 and 10
+        spawn = Math.floor(Math.random() * (500 - 400 + 1) + 500);   // set spawn to random number between 5 and 10
     }
 }
 
