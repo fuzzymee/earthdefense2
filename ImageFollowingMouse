@@ -1,4 +1,6 @@
 //Image follow mouse code from https://stackoverflow.com/questions/7143806/make-an-image-follow-mouse-pointer
+//Can also check http://help.dottoro.com/ljlrboji.php for onmousemove event
+
 
 <head>
 <style>
