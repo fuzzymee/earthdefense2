@@ -1,0 +1,50 @@
+Constant header example from https://stackoverflow.com/questions/3593594/how-to-keep-the-header-static-always-on-top-while-scrolling
+
+//html
+
+<div id="uberbar">
+    <a href="#top">Top of Page</a>
+    <a href="#bottom">Bottom of Page</a>
+
+</div>
+
+//css 
+
+#uberbar    { 
+    border-bottom:1px solid #eb7429; 
+    background:#fc9453; 
+    padding:10px 20px; 
+    position:fixed; 
+    top:0; 
+    left:0; 
+    z-index:2000; 
+    width:100%;
+}
+
+//jquery
+
+$(document).ready(function() {
+    (function() {
+        //settings
+        var fadeSpeed = 200, fadeTo = 0.5, topDistance = 30;
+        var topbarME = function() { $('#uberbar').fadeTo(fadeSpeed,1); }, topbarML = function() { $('#uberbar').fadeTo(fadeSpeed,fadeTo); };
+        var inside = false;
+        //do
+        $(window).scroll(function() {
+            position = $(window).scrollTop();
+            if(position > topDistance && !inside) {
+                //add events
+                topbarML();
+                $('#uberbar').bind('mouseenter',topbarME);
+                $('#uberbar').bind('mouseleave',topbarML);
+                inside = true;
+            }
+            else if (position < topDistance){
+                topbarME();
+                $('#uberbar').unbind('mouseenter',topbarME);
+                $('#uberbar').unbind('mouseleave',topbarML);
+                inside = false;
+            }
+        });
+    })();
+});
