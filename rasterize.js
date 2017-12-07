@@ -819,7 +819,7 @@ function updateModels() {
                     // delete inputOpaque[m]
                     deleteModel(inputOpaque[m]);
                 }
-            }
+            } else
             if (inputOpaque[m].tag == 'asteroid') {
                 vec3.add(inputOpaque[m].translation, inputOpaque[m].translation, vec3.scale(vec3.create(), inputOpaque[m].direction, 0.0005));
                 inputOpaque[m].longevity += 0.0005;
