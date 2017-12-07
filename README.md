@@ -1,2 +1,2 @@
-# prog3
-helper files for the intro cg class's third programming assignment
+# Game: Earth Defense
+A modified 3D version of Missile Command created for NCSU CSC 561 
