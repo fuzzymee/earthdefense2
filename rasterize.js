@@ -951,6 +951,23 @@ function animateExplosion(model) {
     model.material.texture = "explosion" + exFrame + ".png";
 }
 
+function checkCollision(a, b) {
+    var aRad = (a.a + a.b + a.c) / 3;
+    var bRad = (b.a + b.b + b.c) / 3;
+    var aPos = vec3.create();
+    //console.log(a);
+    //console.log(b);
+    vec3.add(aPos, a.center, a.translation);
+    var bPos = vec3.create();
+    vec3.add(bPos, b.center, b.translation);
+    var dist = vec3.distance(aPos, bPos);
+
+    if (dist < aRad + bRad) {
+        //handle collision
+        //console.log("COLLIDE");
+    }
+}
+
 // render the models sorted by model depth
 function renderModelsSorted() {
 
@@ -959,6 +976,15 @@ function renderModelsSorted() {
         console.log(loaded);
         loaded++;
         console.log(loaded);
+    }
+
+    // check collisions
+    for (m in inputEllipsoids) {
+        for (n in inputEllipsoids) {
+            if (inputEllipsoids[m] !== inputEllipsoids[n]) {
+                checkCollision(inputEllipsoids[m], inputEllipsoids[n]);
+            }
+        }
     }
 
     // update models
