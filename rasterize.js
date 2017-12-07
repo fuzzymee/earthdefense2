@@ -362,11 +362,6 @@ function makeEllipsoid(currEllipsoid,numLongSteps) {
     } // end catch
 } // end make ellipsoid
 
-// create Asteroid
-function generateAsteroid() {
-
-}
-
 //function for generating the shot
 function generateShot(origin) {
     //
