@@ -60,6 +60,7 @@ var pngs = ['shot', 'stars', 'reticle']
 var jpgs = ['asteroid', 'earth', 'sun', 'deathstar']
 var gifs = []
 var loaded = 0;
+var exFrame = 1;
 
 // game variables
 var lifespan = 50;
@@ -825,6 +826,9 @@ function updateModels() {
                     deleteModel(inputOpaque[m]);
                 }
             }
+            if (inputOpaque[m].tag == 'explosion') {
+                animateExplosion(inputOpaque[m]);
+            }
         }
     }
     for (var m in inputTranslucent) {
@@ -934,6 +938,15 @@ function updateAsteroids() {
         timer = 0;
         spawn = Math.floor(Math.random() * (500 - 400 + 1) + 500);   // set spawn to random number between 5 and 10
     }
+}
+
+function animateExplosion(model) {
+    exFrame++;
+    if (exFrame == 10) {
+        //finish explosion
+        exFrame = 1;
+    }
+    model.texture = "explosion" + exFrame + ".png";
 }
 
 // render the models sorted by model depth
