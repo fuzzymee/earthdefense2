@@ -1,5 +1,5 @@
 [
-{"x": 0.0, "y": 0.0, "z": 0.0, "a":0.4, "b":0.4, "c":0.4, "ambient": [0.7,0.7,0.7], "diffuse": [0.0,0.0,0.6], "specular": [0.3,0.3,0.3], "n":5, "alpha": 1, "texture": "earth.jpg", "tag": "earth"},
+{"x": 0.0, "y": 0.0, "z": 0.0, "a":0.45, "b":0.45, "c":0.45, "ambient": [0.7,0.7,0.7], "diffuse": [0.0,0.0,0.6], "specular": [0.3,0.3,0.3], "n":5, "alpha": 1, "texture": "earth.jpg", "tag": "earth"},
 {"x": 2.0, "y": 4.0, "z": 4.0, "a":0.1, "b":0.1, "c":0.1, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.0,0.6], "specular": [0.9,0.9,0.9], "n":7, "alpha": 0.8, "texture": "sun.jpg", "tag": "sun"},
 {"x": 0.0, "y": 0.0, "z": 0.0, "a":10, "b":10, "c":10, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 1, "texture": "stars.png", "tag": "universe"},
 {"x": 0.0, "y": 0.0, "z": 0.5, "a":0.01, "b":0.01, "c":0.01, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 1, "texture": "deathstar.jpg", "tag": "station"},
