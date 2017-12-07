@@ -56,7 +56,8 @@ var viewDelta = 0; // how much to displace view with each key press
 
 // textures
 var textures = new Array()  // array for holding textures, [tag: '', src: '', texture: WebGLTexture]
-var pngs = ['shot', 'stars', 'reticle']
+var pngs = ['shot', 'stars', 'reticle', 'explosion1', 'explosion2', 'explosion3',
+    'explosion4', 'explosion5', 'explosion6', 'explosion7']
 var jpgs = ['asteroid', 'earth', 'sun', 'deathstar']
 var gifs = []
 var loaded = 0;
@@ -453,7 +454,6 @@ function loadModels() {
                 inputTriangles[whichSet].translation = vec3.fromValues(0,0,0); // no translation
                 inputTriangles[whichSet].xAxis = vec3.fromValues(1,0,0); // model X axis
                 inputTriangles[whichSet].yAxis = vec3.fromValues(0,1,0); // model Y axis
-                inputTriangles[whichSet].tag = 'null';
                 inputTriangles[whichSet].longevity = 0;
 
                 // set up the vertex and normal arrays, define model center and axes
@@ -499,6 +499,8 @@ function loadModels() {
                 gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(inputTriangles[whichSet].glTriangles),gl.STATIC_DRAW); // data in
 
             } // end for each triangle set 
+
+            console.log(inputTriangles);
         
             inputEllipsoids = getJSONFile(INPUT_ELLIPSOIDS_URL,"ellipsoids"); // read in the ellipsoids
 
@@ -826,9 +828,6 @@ function updateModels() {
                     deleteModel(inputOpaque[m]);
                 }
             }
-            if (inputOpaque[m].tag == 'explosion') {
-                animateExplosion(inputOpaque[m]);
-            }
         }
     }
     for (var m in inputTranslucent) {
@@ -843,6 +842,9 @@ function updateModels() {
                     // delete inputOpaque[m]
                     deleteModel(inputTranslucent[m]);
                 }
+            }
+            if (inputTranslucent[m].tag == 'explosion') {
+                animateExplosion(inputTranslucent[m]);
             }
         }
     }
@@ -942,11 +944,11 @@ function updateAsteroids() {
 
 function animateExplosion(model) {
     exFrame++;
-    if (exFrame == 10) {
+    if (exFrame == 8) {
         //finish explosion
         exFrame = 1;
     }
-    model.texture = "explosion" + exFrame + ".png";
+    model.material.texture = "explosion" + exFrame + ".png";
 }
 
 // render the models sorted by model depth
