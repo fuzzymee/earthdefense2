@@ -884,7 +884,10 @@ function spawnAsteroid() {
     //
     var ellipsoid = {};
     ellipsoid.x = spawnLocation[0]; ellipsoid.y = spawnLocation[1]; ellipsoid.z = spawnLocation[2];
-    ellipsoid.a = 0.02; ellipsoid.b = 0.02; ellipsoid.c = 0.02;
+    ellipsoid.a = Math.random() * 0.03 + 0.01;
+    ellipsoid.b = Math.random() * 0.03 + 0.01;
+    ellipsoid.c = Math.random() * 0.03 + 0.01;
+    console.log("A: " + ellipsoid.a + "B: " + ellipsoid.b + "C: " + ellipsoid.c);
     ellipsoid.translation = vec3.fromValues(0,0,0); // ellipsoids begin without translation
     ellipsoid.xAxis = vec3.fromValues(1,0,0); // ellipsoid X axis
     ellipsoid.yAxis = vec3.fromValues(0,1,0); // ellipsoid Y axis 
@@ -900,6 +903,7 @@ function spawnAsteroid() {
     ellipsoid.longevity = 0;
     ellipsoid.direction = vec3.subtract(vec3.create(), vec3.fromValues(target[0], target[1], target[2]),
         vec3.fromValues(ellipsoid.x, ellipsoid.y, ellipsoid.z));
+    //ellipsoid.rotation = add random rotation?
 
     ellipsoidModel = makeEllipsoid(ellipsoid,32);
     ellipsoid.glNormals = ellipsoidModel.normals;
