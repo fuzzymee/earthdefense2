@@ -59,6 +59,7 @@ var textures = new Array()  // array for holding textures, [tag: '', src: '', te
 var pngs = ['shot', 'stars', 'reticle']
 var jpgs = ['asteroid', 'earth', 'sun', 'deathstar']
 var gifs = []
+var loaded = 0;
 
 // game variables
 var lifespan = 50;
@@ -197,17 +198,19 @@ function setupTextures() {
     for (var t in textures) {
         textures[t].texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, textures[t].texture);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([255, 0, 0, 255]));
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); // flip image
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([255, 0, 0, 255])); // red placeholder texture
         textures[t].image = new Image();
         textures[t].image.crossOrigin = "anonymous";
         textures[t].image.onload = function() {
             gl.bindTexture(gl.TEXTURE_2D, textures[t].texture);
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); // flip image
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textures[t].image);
+            //gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textures[t].image);
+            loaded++;
         };
+
         var fullURL = TEXTURES_URL + textures[t].src;
         textures[t].image.src = fullURL;
+        
     }
 
     finishLoadingTextures(); // not sure why this can't happen in image.onload, but works here...
@@ -936,6 +939,13 @@ function updateAsteroids() {
 
 // render the models sorted by model depth
 function renderModelsSorted() {
+
+    if (loaded == textures.length) {
+        finishLoadingTextures();
+        console.log(loaded);
+        loaded++;
+        console.log(loaded);
+    }
 
     // update models
     updateModels();
