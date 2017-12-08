@@ -293,9 +293,6 @@ function makeEllipsoid(currEllipsoid,numLongSteps) {
         else if (numLongSteps < 4)
             throw "in makeSphere: number of longitude steps too small!";
         else { // good number longitude steps
-           
-            console.log("ellipsoid xyz: "+ currEllipsoid.x +" "+ currEllipsoid.y +" "+ currEllipsoid.z);
-                        
             // make vertices
             var ellipsoidVertices = [0,-1,0]; // vertices to return, init to south pole
             var ellipsoidTextures = [0, 0]; // texture coords to return
@@ -372,18 +369,23 @@ function makeEllipsoid(currEllipsoid,numLongSteps) {
 
 //function for generating the shot
 function generateShot(origin) {
-    //
+    var vMatrix = mat4.create(); // view matrix
+    mat4.lookAt(vMatrix,Eye,Center,Up); // create view matrix
+console.log(vMatrix);
+    mat4.multiply(vMatrix,vMatrix,viewMatrix); // create view matrix
+console.log(vMatrix);
+    mat4.scale(vMatrix, vMatrix, vec3.fromValues(2, 2, 2));
+    var location = vec3.scale(vec3.create(), vec3.fromValues(vMatrix[12], vMatrix[13], vMatrix[14]), -1);
+    console.log(location);
+
+    
+console.log(vMatrix);
+
     var ellipsoid = {};
-    var curView = mat4.create();
-    var lookee = mat4.create();
-    mat4.lookAt(lookee, Eye, Center, Up);
-    mat4.multiply(curView, viewMatrix, lookee);
-    console.log(curView);
-    var location = vec3.add(vec3.create(), vec3.fromValues(Eye[0], Eye[1], Eye[2]),
-        vec3.fromValues(viewMatrix[11], viewMatrix[12], viewMatrix[13]));
     var target = vec3.add(vec3.create(), vec3.fromValues(Center[0], Center[1], Center[2]),
         vec3.fromValues(viewMatrix[2], viewMatrix[6], viewMatrix[10]));
-    ellipsoid.x = location[0]; ellipsoid.y = location[1]; ellipsoid.z = location[2];
+
+    ellipsoid.x = location[0]; ellipsoid.y = location[1]; ellipsoid.z = vMatrix[2];
     ellipsoid.a = 0.1; ellipsoid.b = 0.1; ellipsoid.c = 0.1;
     ellipsoid.translation = vec3.fromValues(0,0,0); // ellipsoids begin without translation
     ellipsoid.xAxis = vec3.fromValues(1,0,0); // ellipsoid X axis
@@ -401,8 +403,6 @@ function generateShot(origin) {
     ellipsoid.longevity = 0;
     ellipsoid.direction = vec3.subtract(vec3.create(), vec3.fromValues(target[0], target[1], target[2]),
         vec3.fromValues(ellipsoid.x, ellipsoid.y, ellipsoid.z));
-
-    console.log(ellipsoid.x, ellipsoid.y, ellipsoid.z);
 
     ellipsoidModel = makeEllipsoid(ellipsoid,32);
     ellipsoid.glNormals = ellipsoidModel.normals;
@@ -505,8 +505,6 @@ function loadModels() {
                 gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(inputTriangles[whichSet].glTriangles),gl.STATIC_DRAW); // data in
 
             } // end for each triangle set 
-
-            console.log(inputTriangles);
         
             inputEllipsoids = getJSONFile(INPUT_ELLIPSOIDS_URL,"ellipsoids"); // read in the ellipsoids
 
@@ -891,8 +889,8 @@ function getAsteroidTarget(spawnLocation) {
 function spawnAsteroid() {
     var spawnLocation = getSpotOnSphere(0, 0, 0, 10);
     var target = getAsteroidTarget(spawnLocation);
-    console.log("spawn: " + spawnLocation);
-    console.log("target: " + target);
+    //console.log("spawn: " + spawnLocation);
+    //console.log("target: " + target);
 
     //
     var ellipsoid = {};
@@ -900,7 +898,7 @@ function spawnAsteroid() {
     ellipsoid.a = Math.random() * 0.03 + 0.01;
     ellipsoid.b = Math.random() * 0.03 + 0.01;
     ellipsoid.c = Math.random() * 0.03 + 0.01;
-    console.log("A: " + ellipsoid.a + "B: " + ellipsoid.b + "C: " + ellipsoid.c);
+
     ellipsoid.translation = vec3.fromValues(0,0,0); // ellipsoids begin without translation
     ellipsoid.xAxis = vec3.fromValues(1,0,0); // ellipsoid X axis
     ellipsoid.yAxis = vec3.fromValues(0,1,0); // ellipsoid Y axis 
@@ -987,8 +985,6 @@ function checkCollision(a, b) {
             deleteModel(a);
             deleteModel(b);
             score += 10;
-            console.log("Score: " + score);
-            console.log("COLLIDE SHOT");
         } else if (b.tag == 'station') {
             // destroy asteroid, spawn explosion, damage station and destroy if life < 0 then weaken shield
             // if last station destroyed, destroy shield as wells
@@ -1006,7 +1002,6 @@ function checkCollision(a, b) {
                     }
                 }
             }
-            console.log("COLLIDE STATION");
         } else if (b.tag == 'shield') {
             // destroy asteroid, spawn explosion, damage earth based on shield strength
             deleteModel(a);
@@ -1020,7 +1015,6 @@ function checkCollision(a, b) {
                     }
                 }
             }
-            console.log("COLLIDE SHIELD");
         } else if (b.tag == 'earth') {
             // destroy asteroid, spawn explosion, damage earth and destroy if life < 0
             deleteModel(a);
@@ -1029,9 +1023,7 @@ function checkCollision(a, b) {
                 deleteModel(a);
                 // handle game over
             }
-            console.log("COLLIDE EARTH");
         }
-        console.log("COLLIDE");
     }
 }
 
