@@ -878,8 +878,8 @@ function getAsteroidTarget(spawnLocation) {
     var dist = 100;
     var temp = 0;
     for (t in station_centers) {
-        temp = vec3.length(vec3.subtract(vec3.create(), vec3.fromValues(station_centers[t][0], station_centers[t][1], station_centers[t][2]),
-            vec3.fromValues(spawnLocation[0], spawnLocation[1], spawnLocation[2])));
+        temp = vec3.length(vec3.subtract(vec3.create(), vec3.fromValues(station_centers[t][0], station_centers[t][1],
+            station_centers[t][2]), vec3.fromValues(spawnLocation[0], spawnLocation[1], spawnLocation[2])));
         if (temp < dist) {
             dist = temp;
             closest = station_centers[t];
@@ -991,13 +991,44 @@ function checkCollision(a, b) {
             console.log("COLLIDE SHOT");
         } else if (b.tag == 'station') {
             // destroy asteroid, spawn explosion, damage station and destroy if life < 0 then weaken shield
-            // if last station destroyed, destroy shield as well
+            // if last station destroyed, destroy shield as wells
+            deleteModel(a);
+            b.health -= 5;
+            if (b.health == 0) {
+                deleteModel(b);
+                shield_level--;
+                if (shield_level == 0) {
+                    for (var o in inputEllipsoids) {
+                        if (inputEllipsoids[o].tag == 'shield') {
+                            deleteModel(inputEllipsoids[o]);
+                            break;
+                        }
+                    }
+                }
+            }
             console.log("COLLIDE STATION");
         } else if (b.tag == 'shield') {
             // destroy asteroid, spawn explosion, damage earth based on shield strength
+            deleteModel(a);
+            earth_health -= 15 / shield_level;
+            if (earth_health <= 0) {
+                for (var o in inputEllipsoids) {
+                    if (inputEllipsoids[o].tag == 'earth') {
+                        deleteModel(inputEllipsoids[o]);
+                        // handle game over
+                        break;
+                    }
+                }
+            }
             console.log("COLLIDE SHIELD");
         } else if (b.tag == 'earth') {
             // destroy asteroid, spawn explosion, damage earth and destroy if life < 0
+            deleteModel(a);
+            earth_health -= 15;
+            if (earth_health <= 0) {
+                deleteModel(a);
+                // handle game over
+            }
             console.log("COLLIDE EARTH");
         }
         console.log("COLLIDE");
