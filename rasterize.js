@@ -74,6 +74,10 @@ var station_centers = [
     [-0.35, 0, -0.35],
     [0.35, 0, -0.35]
 ];
+var score = 0;
+var station_health = 10;
+var earth_health = 50;
+var shield_level = 2;
 
 // ASSIGNMENT HELPER FUNCTIONS
 
@@ -525,7 +529,6 @@ function loadModels() {
                     ellipsoid.xAxis = vec3.fromValues(1,0,0); // ellipsoid X axis
                     ellipsoid.yAxis = vec3.fromValues(0,1,0); // ellipsoid Y axis 
                     ellipsoid.center = vec3.fromValues(ellipsoid.x,ellipsoid.y,ellipsoid.z); // locate ellipsoid ctr
-                    ellipsoid.tag = 'null';
                     ellipsoid.longevity = 0;
 
                     vec3.set(minXYZ,ellipsoid.x-ellipsoid.a,ellipsoid.y-ellipsoid.b,ellipsoid.z-ellipsoid.c); 
@@ -977,7 +980,26 @@ function checkCollision(a, b) {
     var dist = vec3.distance(aPos, bPos);
 
     if (dist < aRad + bRad) {
+        console.log(b);
         //handle collision
+        if (b.tag == 'shot') {
+            // destroy asteroid and shot, spawn explosion, give player points
+            deleteModel(a);
+            deleteModel(b);
+            score += 10;
+            console.log("Score: " + score);
+            console.log("COLLIDE SHOT");
+        } else if (b.tag == 'station') {
+            // destroy asteroid, spawn explosion, damage station and destroy if life < 0 then weaken shield
+            // if last station destroyed, destroy shield as well
+            console.log("COLLIDE STATION");
+        } else if (b.tag == 'shield') {
+            // destroy asteroid, spawn explosion, damage earth based on shield strength
+            console.log("COLLIDE SHIELD");
+        } else if (b.tag == 'earth') {
+            // destroy asteroid, spawn explosion, damage earth and destroy if life < 0
+            console.log("COLLIDE EARTH");
+        }
         console.log("COLLIDE");
     }
 }
