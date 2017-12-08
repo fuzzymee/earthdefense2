@@ -812,12 +812,6 @@ function deleteModel(model) {
         }
     }
 
-    var vertexBuffers = []; // this contains vertex coordinate lists by set, in triples
-    var normalBuffers = []; // this contains normal component lists by set, in triples
-    var textureBuffers = []; // this contains texture uv lists by vertex, in doubles
-    var triSetSizes = []; // this contains the size of each triangle set
-    var triangleBuffers = []; // lists of indices into vertexBuffers by set, in triples
-
     if (model.shape == "ellipsoid") {
         vertexBuffers.splice(model.whichEllipsoid + numTriangleSets, 1);
         normalBuffers.splice(model.whichEllipsoid + numTriangleSets, 1);
