@@ -1,10 +1,11 @@
 [
 {"x": 0.0, "y": 0.0, "z": 0.0, "a":0.45, "b":0.45, "c":0.45, "ambient": [0.7,0.7,0.7], "diffuse": [0.0,0.0,0.6], "specular": [0.3,0.3,0.3], "n":5, "alpha": 1, "texture": "earth.jpg", "tag": "earth", "collider": true},
-{"x": 2.0, "y": 4.0, "z": 4.0, "a":0.1, "b":0.1, "c":0.1, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.0,0.6], "specular": [0.9,0.9,0.9], "n":7, "alpha": 0.8, "texture": "sun.jpg", "tag": "sun"},
-{"x": 0.0, "y": 0.0, "z": 0.0, "a":10, "b":10, "c":10, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 1, "texture": "stars.png", "tag": "universe"},
+{"x": 2.0, "y": 4.0, "z": 4.0, "a":0.1, "b":0.1, "c":0.1, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.0,0.6], "specular": [0.9,0.9,0.9], "n":7, "alpha": 0.8, "texture": "sun.jpg", "tag": "sun", "collider": false},
+{"x": 0.0, "y": 0.0, "z": 0.0, "a":10, "b":10, "c":10, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 1, "texture": "stars.png", "tag": "universe", "collider": false},
 {"x": 0.0, "y": 0.0, "z": 0.5, "a":0.01, "b":0.01, "c":0.01, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 1, "texture": "deathstar.jpg", "tag": "station", "collider": true, "id": 0, "health": 10},
 {"x": -0.35, "y": 0.0, "z": -0.35, "a":0.04, "b":0.04, "c":0.04, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 1, "texture": "deathstar.jpg", "tag": "station", "collider": true, "id": 1, "health": 10},
 {"x": 0.35, "y": 0.0, "z": -0.35, "a":0.04, "b":0.04, "c":0.04, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 1, "texture": "deathstar.jpg", "tag": "station", "collider": true, "id": 2, "health": 10},
 {"x": 0.0, "y": 0.0, "z": 0.0, "a":0.5, "b":0.5, "c":0.5, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 0.3, "texture": "sun.jpg", "tag": "shield", "collider": true},
-{"x": 0.0, "y": 0.5, "z": 1.0, "a":0.05, "b":0.05, "c":0.05, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 0.2, "texture": "asteroid.jpg", "tag": "asteroid", "collider": true}
+{"x": 0.0, "y": 0.5, "z": 1.0, "a":0.05, "b":0.05, "c":0.05, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 1.0, "texture": "asteroid.jpg", "tag": "asteroid", "collider": true},
+{"x": 0.0, "y": 1.0, "z": 1.0, "a":0.05, "b":0.05, "c":0.05, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 0.8, "texture": "explosion1.png", "tag": "explosion", "collider": false}
 ]

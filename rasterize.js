@@ -26,6 +26,8 @@ var inputTranslucent = new Array(); // translucent models
 var inputModels = new Array(); // models sorted by depth
 var inputTrianglesSorted = new Array(); // triangles sorted by depth
 
+var curInd = 0;
+
 var vertexBuffers = []; // this contains vertex coordinate lists by set, in triples
 var normalBuffers = []; // this contains normal component lists by set, in triples
 var textureBuffers = []; // this contains texture uv lists by vertex, in doubles
@@ -69,6 +71,7 @@ var asteroids = [];
 var lifespan = 50;
 var timer = 0;
 var spawn = 10;
+var current_center = 0;
 var station_centers = [
     [0, 0, 0.5],
     [-0.35, 0, -0.35],
@@ -370,16 +373,13 @@ function makeEllipsoid(currEllipsoid,numLongSteps) {
 //function for generating the shot
 function generateShot(origin) {
     var vMatrix = mat4.create(); // view matrix
+    var location = vec3.create();
     mat4.lookAt(vMatrix,Eye,Center,Up); // create view matrix
-console.log(vMatrix);
-    mat4.multiply(vMatrix,vMatrix,viewMatrix); // create view matrix
-console.log(vMatrix);
-    mat4.scale(vMatrix, vMatrix, vec3.fromValues(2, 2, 2));
-    var location = vec3.scale(vec3.create(), vec3.fromValues(vMatrix[12], vMatrix[13], vMatrix[14]), -1);
+    vec3.scale(location, vec3.fromValues(vMatrix[12], vMatrix[13], vMatrix[14]), -1);
     console.log(location);
-
-    
-console.log(vMatrix);
+    //mat4.multiply(vMatrix, vMatrix, viewMatrix);
+    vec3.transformMat4(location,location,viewMatrix); // create view matrix
+    console.log(location);
 
     var ellipsoid = {};
     var target = vec3.add(vec3.create(), vec3.fromValues(Center[0], Center[1], Center[2]),
@@ -811,8 +811,25 @@ function deleteModel(model) {
             }
         }
     }
-    inputEllipsoids.splice(model.whichEllipsoid, 1);
+
+    var vertexBuffers = []; // this contains vertex coordinate lists by set, in triples
+    var normalBuffers = []; // this contains normal component lists by set, in triples
+    var textureBuffers = []; // this contains texture uv lists by vertex, in doubles
+    var triSetSizes = []; // this contains the size of each triangle set
+    var triangleBuffers = []; // lists of indices into vertexBuffers by set, in triples
+
+    if (model.shape == "ellipsoid") {
+        vertexBuffers.splice(model.whichEllipsoid + numTriangleSets, 1);
+        normalBuffers.splice(model.whichEllipsoid + numTriangleSets, 1);
+        textureBuffers.splice(model.whichEllipsoid + numTriangleSets, 1);
+        triSetSizes.splice(model.whichEllipsoid + numTriangleSets, 1);
+        triangleBuffers.splice(model.whichEllipsoid + numTriangleSets, 1);
+        inputEllipsoids.splice(model.whichEllipsoid, 1);
+    }
+    
     sortModels();
+
+    console.log(vertexBuffers);
 }
 
 
@@ -1029,6 +1046,8 @@ function checkCollision(a, b) {
 
 // render the models sorted by model depth
 function renderModelsSorted() {
+
+    sortModels();
 
     if (loaded == textures.length) {
         finishLoadingTextures();
