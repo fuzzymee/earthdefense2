@@ -63,6 +63,8 @@ var gifs = []
 var loaded = 0;
 var exFrame = 1;
 
+var asteroids = [];
+
 // game variables
 var lifespan = 50;
 var timer = 0;
@@ -801,6 +803,13 @@ function findTexture(model, shape) {
 
 // deletes the model given (currently assumes model is an ellipsoid)
 function deleteModel(model) {
+    if (model.tag == "asteroid") {
+        for (var a in asteroids) {
+            if (asteroids[a] == model) {
+                asteroids.splice(a, 1);
+            }
+        }
+    }
     inputEllipsoids.splice(model.whichEllipsoid, 1);
     sortModels();
 }
@@ -901,6 +910,7 @@ function spawnAsteroid() {
     ellipsoid.texture = "asteroid.jpg";
     ellipsoid.on = false;
     ellipsoid.tag = 'asteroid';
+    ellipsoid.collider = true;
     ellipsoid.longevity = 0;
     ellipsoid.direction = vec3.subtract(vec3.create(), vec3.fromValues(target[0], target[1], target[2]),
         vec3.fromValues(ellipsoid.x, ellipsoid.y, ellipsoid.z));
@@ -913,6 +923,7 @@ function spawnAsteroid() {
     ellipsoid.glTriangles = ellipsoidModel.triangles;
 
     inputEllipsoids.push(ellipsoid);
+    asteroids.push(ellipsoid);
 
     // send the ellipsoid vertex coords and normals to webGL
     vertexBuffers.push(gl.createBuffer()); // init empty webgl ellipsoid vertex coord buffer
@@ -933,6 +944,7 @@ function spawnAsteroid() {
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(ellipsoidModel.triangles),gl.STATIC_DRAW); // data in
 }
 
+// spawn incr timer, spawn asteroid if timer == spawn, reset timer, randomize next spawn time limit
 function updateAsteroids() {
     timer++;
     if (timer >= spawn) {
@@ -942,6 +954,7 @@ function updateAsteroids() {
     }
 }
 
+// animate the explosion sprites
 function animateExplosion(model) {
     exFrame++;
     if (exFrame == 8) {
@@ -951,6 +964,7 @@ function animateExplosion(model) {
     model.material.texture = "explosion" + exFrame + ".png";
 }
 
+// look for collision between asteroids and other objects
 function checkCollision(a, b) {
     var aRad = (a.a + a.b + a.c) / 3;
     var bRad = (b.a + b.b + b.c) / 3;
@@ -964,7 +978,7 @@ function checkCollision(a, b) {
 
     if (dist < aRad + bRad) {
         //handle collision
-        //console.log("COLLIDE");
+        console.log("COLLIDE");
     }
 }
 
@@ -979,10 +993,10 @@ function renderModelsSorted() {
     }
 
     // check collisions
-    for (m in inputEllipsoids) {
+    for (a in asteroids) {
         for (n in inputEllipsoids) {
-            if (inputEllipsoids[m] !== inputEllipsoids[n]) {
-                checkCollision(inputEllipsoids[m], inputEllipsoids[n]);
+            if (asteroids[a] !== inputEllipsoids[n] && inputEllipsoids[n].collider) {
+                checkCollision(asteroids[a], inputEllipsoids[n]);
             }
         }
     }
