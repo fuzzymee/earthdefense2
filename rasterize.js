@@ -60,7 +60,7 @@ var viewDelta = 0; // how much to displace view with each key press
 var textures = new Array()  // array for holding textures, [tag: '', src: '', texture: WebGLTexture]
 var pngs = ['shot', 'stars', 'explosion1', 'explosion2', 'explosion3', 'explosion4', 'explosion5', 'explosion6',
     'explosion7', 'highlight', 'shield']
-var jpgs = ['asteroid', 'earth', 'sun', 'deathstar']
+var jpgs = ['asteroid', 'earth', 'sun', 'deathstar', 'moon']
 var gifs = []
 var loaded = 0;
 var exFrame = 1;

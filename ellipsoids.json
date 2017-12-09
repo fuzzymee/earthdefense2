@@ -6,6 +6,6 @@
 {"x": -0.35, "y": 0.0, "z": -0.35, "a":0.045, "b":0.045, "c":0.045, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 1, "texture": "deathstar.jpg", "tag": "station", "collider": true, "id": 1, "health": 10},
 {"x": 0.35, "y": 0.0, "z": -0.35, "a":0.045, "b":0.045, "c":0.045, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 1, "texture": "deathstar.jpg", "tag": "station", "collider": true, "id": 2, "health": 10},
 {"x": 0.0, "y": 0.0, "z": 0.0, "a":0.5, "b":0.5, "c":0.5, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 0.6, "texture": "shield.png", "tag": "shield", "collider": true},
-{"x": 0.0, "y": 0.0, "z": 2.0, "a":0.075, "b":0.075, "c":0.075, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 1.0, "texture": "asteroid.jpg", "tag": "moon", "collider": true, "health": 15},
+{"x": 0.0, "y": 0.0, "z": 2.0, "a":0.075, "b":0.075, "c":0.075, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 1.0, "texture": "moon.jpg", "tag": "moon", "collider": true, "health": 15},
 {"x": 0.0, "y": 0.0, "z": 0.0, "a":0.06, "b":0.06, "c":0.06, "ambient": [0.7,0.7,0.7], "diffuse": [0.9,0.9,0.9], "specular": [0.3,0.3,0.3], "n":9, "alpha": 0.3, "texture": "highlight.png", "tag": "highlight", "collider": false}
 ]
