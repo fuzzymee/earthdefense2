@@ -59,7 +59,7 @@ var viewDelta = 0; // how much to displace view with each key press
 // textures
 var textures = new Array()  // array for holding textures, [tag: '', src: '', texture: WebGLTexture]
 var pngs = ['shot', 'stars', 'explosion1', 'explosion2', 'explosion3', 'explosion4', 'explosion5', 'explosion6',
-    'explosion7', 'highlight']
+    'explosion7', 'highlight', 'shield']
 var jpgs = ['asteroid', 'earth', 'sun', 'deathstar']
 var gifs = []
 var loaded = 0;
@@ -125,8 +125,7 @@ function changeStation() {
     }
     highlight.translation = vec3.fromValues(station_centers[current_center][0], station_centers[current_center][1],
             station_centers[current_center][2]);
-    console.log(highlight);
-    console.log(current_center);
+    console.log("Current Station: " + current_center);
 }
 
 // does stuff when keys are pressed
@@ -824,7 +823,6 @@ function generateShot() {
     var ellipsoid = {};
     var location = station_centers[current_center];
     var target = stationTarget(location);
-    console.log(target);
 
     ellipsoid.x = location[0]; ellipsoid.y = location[1]; ellipsoid.z = location[2];
     ellipsoid.a = 0.02; ellipsoid.b = 0.02; ellipsoid.c = 0.02;
@@ -844,8 +842,6 @@ function generateShot() {
     ellipsoid.tag = 'shot';
     ellipsoid.longevity = 0;
     ellipsoid.direction = [target[0] - location[0], target[1] - location[1], target[2] - location[2]];
-
-    console.log("DIRECTION: " + ellipsoid.direction);
     ellipsoid.index = curInd;
     curInd++
 
@@ -905,9 +901,8 @@ function getAsteroidTarget(spawnLocation) {
 function generateAsteroid() {
     var spawnLocation = getSpotOnSphere(0, 0, 0, 10);
     var target = getAsteroidTarget(spawnLocation);
-    console.log("target: " + target);
 
-    //
+    // initialize ellipse
     var ellipsoid = {};
     ellipsoid.x = spawnLocation[0]; ellipsoid.y = spawnLocation[1]; ellipsoid.z = spawnLocation[2];
     ellipsoid.a = Math.random() * 0.03 + 0.01;
@@ -1090,7 +1085,7 @@ function checkCollision(a, b) {
                 // reduce shield alpha by one to signify weakening
                 for (var o in inputEllipsoids) {
                     if (inputEllipsoids[o].tag == 'shield') {
-                        inputEllipsoids[o].alpha--;
+                        inputEllipsoids[o].alpha -= 2;
                     }
                 }
                 // if the destroyed center is highlighted, switch to next
@@ -1195,9 +1190,8 @@ function renderModelsSorted() {
 
     if (loaded == textures.length) {
         finishLoadingTextures();
-        console.log(loaded);
         loaded++;
-        console.log(loaded);
+        console.log("Textures Loaded");
     }
 
     // check collisions
