@@ -216,10 +216,15 @@ function handleKeyDown(event) {
             case "KeyG":
                 finishLoadingTextures();
                 break;
-            case "KeyH":
+            case "Space":
                 generateShot();
                 break;
         } // end switch
+    }
+    switch (event.code) {
+        case "KeyR":
+            restart();
+            break;
     }
 } // end handleKeyDown
 
@@ -1478,6 +1483,47 @@ function renderModelsSorted() {
             gl.drawElements(gl.TRIANGLES,triSetSizes[index],gl.UNSIGNED_SHORT,0); // render
         }
     }
+}
+
+function restart() {
+    inputTriangles = []; // the triangle data as loaded from input files
+    numTriangleSets = 0; // how many triangle sets in input scene
+    inputEllipsoids = []; // the ellipsoid data as loaded from input files
+    numEllipsoids = 0; // how many ellipsoids in the input scene
+    inputOpaque = new Array(); // opaque models
+    inputTranslucent = new Array(); // translucent models
+    inputModels = new Array(); // models sorted by depth
+    inputTrianglesSorted = new Array(); // triangles sorted by depth
+    
+    curInd = 0;
+    
+    vertexBuffers = []; // this contains vertex coordinate lists by set, in triples
+    normalBuffers = []; // this contains normal component lists by set, in triples
+    textureBuffers = []; // this contains texture uv lists by vertex, in doubles
+    triSetSizes = []; // this contains the size of each triangle set
+    triangleBuffers = []; // lists of indices into vertexBuffers by set, in triples
+
+    asteroids = [];
+    explosions = [];
+    stations = [];
+    highlight = null;
+
+    // game variables
+    timer = 0;
+    spawn = 10;
+    current_center = 0;
+
+    score = 0;
+    earth_health = 50;
+    shield_level = 3;
+    base_limit = 2;
+    frame = 0;
+    framerate = 2;
+    exploding = 0;
+    paused = false;
+    apocalypse = false;
+    
+    loadModels();
 }
 
 /* MAIN -- HERE is where execution begins after window load */
