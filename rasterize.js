@@ -1185,6 +1185,15 @@ function checkCollision(a, b) {
                 console.log("NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!");
                 gameOver(b);
             }
+        } else if (b.tag == 'moon') {
+            b.health -= 5;
+            console.log("Oh no! The moon took damage!");
+            if (b.health <= 0) {
+                console.log("We lost the moon!");
+                generateExplosion(vec3.add(vec3.create(), vec3.fromValues(b.x, b.y, b.z),
+                    vec3.fromValues(b.translation[0], b.translation[1], b.translation[2])), true);
+                deleteModel(b);
+            }
         }
     }
 }
