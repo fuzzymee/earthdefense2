@@ -769,8 +769,11 @@ function deleteModel(model) {
             }
         }
     }
-    
-    inputEllipsoids.splice(model.whichEllipsoid, 1);
+    for (var e in inputEllipsoids) {
+        if (inputEllipsoids[e] == model) {
+            inputEllipsoids.splice(e, 1);
+        }
+    }
 }
 
 
@@ -831,21 +834,21 @@ function stationTarget(def) {
         }
     }
     if (closest !== null) {
-        target = vec3.add(vec3.create(), vec3.fromValues(closest.x, closest.y, closest.x), closest.translation);
+        target = vec3.add(vec3.create(), vec3.fromValues(closest.x, closest.y, closest.z), closest.translation);
     }
 
     return target;
 }
 
 //function for generating the shot
-function generateShot(origin) {
+function generateShot() {
     var ellipsoid = {};
     var location = station_centers[current_center];
     var target = stationTarget(location);
     console.log(target);
 
     ellipsoid.x = location[0]; ellipsoid.y = location[1]; ellipsoid.z = location[2];
-    ellipsoid.a = 0.1; ellipsoid.b = 0.1; ellipsoid.c = 0.1;
+    ellipsoid.a = 0.02; ellipsoid.b = 0.02; ellipsoid.c = 0.02;
     ellipsoid.translation = vec3.fromValues(0,0,0); // ellipsoids begin without translation
     ellipsoid.xAxis = vec3.fromValues(1,0,0); // ellipsoid X axis
     ellipsoid.yAxis = vec3.fromValues(0,1,0); // ellipsoid Y axis 
@@ -858,9 +861,12 @@ function generateShot(origin) {
     ellipsoid.texture = "shot.png";
     ellipsoid.center = vec3.fromValues(ellipsoid.x,ellipsoid.y,ellipsoid.z);
     ellipsoid.on = false;
+    ellipsoid.collider = true;
     ellipsoid.tag = 'shot';
     ellipsoid.longevity = 0;
-    ellipsoid.direction = target;
+    ellipsoid.direction = [target[0] - location[0], target[1] - location[1], target[2] - location[2]];
+
+    console.log("DIRECTION: " + ellipsoid.direction);
     ellipsoid.index = curInd;
     curInd++
 
@@ -1011,7 +1017,7 @@ function checkCollision(a, b) {
     var dist = vec3.distance(aPos, bPos);
 
     if (dist < aRad + bRad) {
-        console.log(b);
+        collided = true;
         //handle collision
         if (b.tag == 'shot') {
             // destroy asteroid and shot, spawn explosion, give player points

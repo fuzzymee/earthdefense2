@@ -7,5 +7,5 @@
 {"x": 0.35, "y": 0.0, "z": -0.35, "a":0.05, "b":0.05, "c":0.05, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 1, "texture": "deathstar.jpg", "tag": "station", "collider": true, "id": 2, "health": 10},
 {"x": 0.0, "y": 0.0, "z": 0.0, "a":0.5, "b":0.5, "c":0.5, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 0.3, "texture": "sun.jpg", "tag": "shield", "collider": true},
 {"x": 0.0, "y": 0.6, "z": 1.0, "a":0.05, "b":0.05, "c":0.05, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 1.0, "texture": "asteroid.jpg", "tag": "asteroid", "collider": true, "longevity": 10000, "direction": [0, 0, 0]},
-{"x": 0.0, "y": 0.0, "z": 0.0, "a":0.1, "b":0.1, "c":0.1, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 1.0, "texture": "shot.png", "tag": "shot", "collider": false, "longevity": 10000, "direction": [0, 0, 0]}
+{"x": 0.0, "y": 0.6, "z": 0.5, "a":0.05, "b":0.05, "c":0.05, "ambient": [0.7,0.7,0.7], "diffuse": [0.9,0.9,0.9], "specular": [0.3,0.3,0.3], "n":9, "alpha": 0.8, "texture": "explosion1.png", "tag": "explosion", "collider": false, "longevity": 10000000, "direction": [0, 0, 0]}
 ]
