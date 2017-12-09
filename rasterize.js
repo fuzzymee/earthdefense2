@@ -1118,8 +1118,8 @@ function checkCollision(a, b) {
         //handle collision
         if (b.tag == 'shot') {
             // destroy asteroid and shot, give player points
-            apocalypse = true;
-            gameOver(b);
+            //test *******apocalypse = true;
+            //test *******gameOver(b);
             deleteModel(b);
             score += 10;
         } else if (b.tag == 'station') {
