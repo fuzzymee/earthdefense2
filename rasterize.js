@@ -1085,7 +1085,7 @@ function checkCollision(a, b) {
                 // reduce shield alpha by one to signify weakening
                 for (var o in inputEllipsoids) {
                     if (inputEllipsoids[o].tag == 'shield') {
-                        inputEllipsoids[o].alpha -= 2;
+                        inputEllipsoids[o].alpha -= 0.2;
                     }
                 }
                 // if the destroyed center is highlighted, switch to next
