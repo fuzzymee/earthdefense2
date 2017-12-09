@@ -58,8 +58,7 @@ var viewDelta = 0; // how much to displace view with each key press
 
 // textures
 var textures = new Array()  // array for holding textures, [tag: '', src: '', texture: WebGLTexture]
-var pngs = ['shot', 'stars', 'reticle', 'explosion1', 'explosion2', 'explosion3',
-    'explosion4', 'explosion5', 'explosion6', 'explosion7']
+var pngs = ['shot', 'stars', 'explosion1', 'explosion2', 'explosion3', 'explosion4', 'explosion5', 'explosion6', 'explosion7']
 var jpgs = ['asteroid', 'earth', 'sun', 'deathstar']
 var gifs = []
 var loaded = 0;
@@ -142,6 +141,19 @@ function handleKeyDown(event) {
     handleKeyDown.modelOn = handleKeyDown.modelOn == undefined ? null : handleKeyDown.modelOn; // nothing selected initially
 
     switch (event.code) {
+        // switching between space stations
+        case "ArrowUp":
+                current_center++;
+                if (current_center > 2) {
+                    current_center = 0;
+                }
+            break;
+        case "ArrowDown":
+                current_center--;
+                if (current_center < 0) {
+                    current_center = 2;
+                }
+            break;
         // view change
         case "KeyA": // rotate left across earth
                 var axis = vec3.fromValues(viewMatrix[2], viewMatrix[6], viewMatrix[10]);
