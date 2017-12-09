@@ -126,6 +126,7 @@ function changeStation() {
     if (current_center < 0) {
         current_center = base_limit;
     }
+    console.log(station_centers);
     highlight.translation = vec3.fromValues(station_centers[current_center][0], station_centers[current_center][1],
             station_centers[current_center][2]);
     console.log("Current Station: " + current_center);
@@ -1511,6 +1512,11 @@ function restart() {
     // game variables
     timer = 0;
     spawn = 10;
+    station_centers = [
+        [0, 0, 0.5],
+        [-0.35, 0, -0.35],
+        [0.35, 0, -0.35]
+    ];
     current_center = 0;
 
     score = 0;
