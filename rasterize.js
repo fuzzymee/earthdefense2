@@ -4,7 +4,7 @@
 const INPUT_TRIANGLES_URL = "https://fuzzymee.github.io/earthdefense2/triangles.json"; // triangles file loc
 const INPUT_ELLIPSOIDS_URL = "https://fuzzymee.github.io/earthdefense2/ellipsoids.json"; // ellipsoids file loc
 const TEXTURES_URL = "https://fuzzymee.github.io/earthdefense2/textures/"; // textures file loc
-var defaultEye = vec3.fromValues(0.0,0.6,-0.01); // default eye position in world space
+var defaultEye = vec3.fromValues(0.0,0.6,-1.0); // default eye position in world space
 var defaultCenter = vec3.fromValues(0.0,0.6,0.3); // default view direction in world space
 var defaultUp = vec3.fromValues(0,1,0); // default view up vector
 var viewMatrix = mat4.create();
@@ -86,6 +86,9 @@ var shield_level = 3;
 var base_limit = 2;
 var frame = 0;
 var framerate = 2;
+var exploding = 0;
+var paused = false;
+var apocalypse = false;
 
 // ASSIGNMENT HELPER FUNCTIONS
 
@@ -130,7 +133,7 @@ function changeStation() {
 
 // does stuff when keys are pressed
 function handleKeyDown(event) {
-    
+    /*
     const modelEnum = {TRIANGLES: "triangles", ELLIPSOID: "ellipsoid"}; // enumerated model type
     const dirEnum = {NEGATIVE: -1, POSITIVE: 1}; // enumerated rotation direction
     
@@ -157,65 +160,67 @@ function handleKeyDown(event) {
     // highlight static variables
     handleKeyDown.whichOn = handleKeyDown.whichOn == undefined ? -1 : handleKeyDown.whichOn; // nothing selected initially
     handleKeyDown.modelOn = handleKeyDown.modelOn == undefined ? null : handleKeyDown.modelOn; // nothing selected initially
-
-    switch (event.code) {
-        // switching between space stations
-        case "ArrowUp":
-                if (base_limit != -1) {
-                    current_center++;
-                    changeStation();
+*/
+    if (!paused) {
+        switch (event.code) {
+            // switching between space stations
+            case "ArrowUp":
+                    if (base_limit != -1) {
+                        current_center++;
+                        changeStation();
+                    }
+                break;
+            case "ArrowDown":
+                    if (base_limit != -1) {
+                        current_center--;
+                        changeStation();
+                    }
+                break;
+            // view change
+            case "KeyA": // rotate left across earth
+                    var axis = vec3.fromValues(viewMatrix[2], viewMatrix[6], viewMatrix[10]);
+                    var right = vec3.create();
+                    vec3.cross(right, Up, Center);
+                    vec3.cross(axis, right, Up); 
+                    mat4.multiply(viewMatrix, mat4.fromRotation(mat4.create(), 0.1, axis), viewMatrix);
+                break;
+            case "KeyD": // rotate right across earth
+                    var axis = vec3.fromValues(viewMatrix[2], viewMatrix[6], viewMatrix[10]);
+                    var right = vec3.create();
+                    vec3.cross(right, Up, Center);
+                    vec3.cross(axis, right, Up);
+                    mat4.multiply(viewMatrix, mat4.fromRotation(mat4.create(), -0.1, axis), viewMatrix);
+                break;
+            case "KeyS": // rotate back around earth
+                    var axis = vec3.create();
+                    vec3.cross(axis, Up, Center);
+                    mat4.multiply(viewMatrix, mat4.fromRotation(mat4.create(), 0.1, axis), viewMatrix);
+                break;
+            case "KeyW": // rotate forward around earth
+                    var axis = vec3.create();
+                    vec3.cross(axis, Up, Center);
+                    mat4.multiply(viewMatrix, mat4.fromRotation(mat4.create(), -0.1, axis), viewMatrix);
+                break;
+            case "KeyQ": // turn left above earth
+                    mat4.multiply(viewMatrix, mat4.fromRotation(mat4.create(), -0.1, Up), viewMatrix);
+                break;
+            case "KeyE": // turn right above earth
+                    mat4.multiply(viewMatrix, mat4.fromRotation(mat4.create(), 0.1, Up), viewMatrix);
+                break;
+            case "KeyB": // toggle lighting and blending modes
+                blendMode += 1.0;
+                if (blendMode > 3.0) {
+                    blendMode = 0;
                 }
-            break;
-        case "ArrowDown":
-                if (base_limit != -1) {
-                    current_center--;
-                    changeStation();
-                }
-            break;
-        // view change
-        case "KeyA": // rotate left across earth
-                var axis = vec3.fromValues(viewMatrix[2], viewMatrix[6], viewMatrix[10]);
-                var right = vec3.create();
-                vec3.cross(right, Up, Center);
-                vec3.cross(axis, right, Up); 
-                mat4.multiply(viewMatrix, mat4.fromRotation(mat4.create(), 0.1, axis), viewMatrix);
-            break;
-        case "KeyD": // rotate right across earth
-                var axis = vec3.fromValues(viewMatrix[2], viewMatrix[6], viewMatrix[10]);
-                var right = vec3.create();
-                vec3.cross(right, Up, Center);
-                vec3.cross(axis, right, Up);
-                mat4.multiply(viewMatrix, mat4.fromRotation(mat4.create(), -0.1, axis), viewMatrix);
-            break;
-        case "KeyS": // rotate back around earth
-                var axis = vec3.create();
-                vec3.cross(axis, Up, Center);
-                mat4.multiply(viewMatrix, mat4.fromRotation(mat4.create(), 0.1, axis), viewMatrix);
-            break;
-        case "KeyW": // rotate forward around earth
-                var axis = vec3.create();
-                vec3.cross(axis, Up, Center);
-                mat4.multiply(viewMatrix, mat4.fromRotation(mat4.create(), -0.1, axis), viewMatrix);
-            break;
-        case "KeyQ": // turn left above earth
-                mat4.multiply(viewMatrix, mat4.fromRotation(mat4.create(), -0.1, Up), viewMatrix);
-            break;
-        case "KeyE": // turn right above earth
-                mat4.multiply(viewMatrix, mat4.fromRotation(mat4.create(), 0.1, Up), viewMatrix);
-            break;
-        case "KeyB": // toggle lighting and blending modes
-            blendMode += 1.0;
-            if (blendMode > 3.0) {
-                blendMode = 0;
-            }
-            break;
-        case "KeyG":
-            finishLoadingTextures();
-            break;
-        case "KeyH":
-            generateShot();
-            break;
-    } // end switch
+                break;
+            case "KeyG":
+                finishLoadingTextures();
+                break;
+            case "KeyH":
+                generateShot();
+                break;
+        } // end switch
+    }
 } // end handleKeyDown
 
 function setupTextures() {
@@ -961,14 +966,14 @@ function generateAsteroid() {
 // spawn incr timer, spawn asteroid if timer == spawn, reset timer, randomize next spawn time limit
 function updateAsteroids() {
     timer++;
-    if (timer >= spawn) {
+    if (timer >= spawn && !paused) {
         generateAsteroid();
         timer = 0;
         spawn = Math.floor(Math.random() * (500 - 400 + 1) + 500);   // set spawn to random number between 5 and 10
     }
 }
 
-function generateExplosion(location) {
+function generateExplosion(location, boom) {
     var spawnLocation = location;
 
     //initialize the ellipsoid
@@ -977,6 +982,9 @@ function generateExplosion(location) {
     ellipsoid.a = Math.random() * 0.075 + 0.025;
     ellipsoid.b = Math.random() * 0.075 + 0.025;
     ellipsoid.c = Math.random() * 0.075 + 0.025;
+    if (boom) {
+        ellipsoid.a = 0.5; ellipsoid.b = 0.5; ellipsoid.c = 0.5;
+    }
 
     ellipsoid.translation = vec3.fromValues(0,0,0); // ellipsoids begin without translation
     ellipsoid.xAxis = vec3.fromValues(1,0,0); // ellipsoid X axis
@@ -1054,6 +1062,37 @@ function animateExplosion(model) {
     }
 }
 
+function explodeEarth(earth) {
+    if (exploding < 300) {
+        console.log("Exploding");
+        var location = getSpotOnSphere(earth.x, earth.y, earth.z, earth.a);
+        generateExplosion(location, false);
+    } else if (exploding == 300) {
+        var location = vec3.fromValues(0,0,0);
+        generateExplosion(location, true);
+    } else {
+        deleteModel(earth);
+    }
+}
+
+function gameOver(earth) {
+
+    for (var a in asteroids) {
+        deleteModel(asteroids[a]);
+    }
+    for (var s in stations) {
+        deleteModel(stations[s]);
+    }
+    for (var e in inputEllipsoids) {
+        if (inputEllipsoids[e].tag == 'shield') {
+            deleteModel(inputEllipsoids[e]);
+        }
+    }
+    deleteModel(highlight);
+    apocalypse = true;
+    paused = true;
+}
+
 // look for collision between asteroids and other objects
 function checkCollision(a, b) {
     var aRad = (a.a + a.b + a.c) / 3;
@@ -1068,11 +1107,13 @@ function checkCollision(a, b) {
     if (dist < aRad + bRad) {
         //spawn explosion and destroy asteroid, doesn't matter what asteroid collided with, always explodes
         generateExplosion(vec3.add(vec3.create(), vec3.fromValues(a.x, a.y, a.z),
-            vec3.fromValues(a.translation[0], a.translation[1], a.translation[2])));
+            vec3.fromValues(a.translation[0], a.translation[1], a.translation[2])), false);
         deleteModel(a);
         //handle collision
         if (b.tag == 'shot') {
             // destroy asteroid and shot, give player points
+            apocalypse = true;
+            gameOver(b);
             deleteModel(b);
             score += 10;
         } else if (b.tag == 'station') {
@@ -1123,8 +1164,8 @@ function checkCollision(a, b) {
                 for (var o in inputEllipsoids) {
                     if (inputEllipsoids[o].tag == 'earth') {
                         console.log("NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!");
-                        deleteModel(inputEllipsoids[o]);
                         // handle game over
+                        gameOver(inputEllipsoids[o]);
                         break;
                     }
                 }
@@ -1134,9 +1175,9 @@ function checkCollision(a, b) {
             earth_health -= 15;
             console.log("Direct hit! Health: " + earth_health);
             if (earth_health <= 0) {
-                console.log("NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!");
-                deleteModel(b);
                 // handle game over
+                console.log("NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!");
+                gameOver(b);
             }
         }
     }
@@ -1208,6 +1249,16 @@ function renderModelsSorted() {
         animateExplosion(explosions[e]);
     }
 
+    // if apocalypse
+    if (apocalypse) {
+        for (var e in inputEllipsoids) {
+            if (inputEllipsoids[e].tag == 'earth') {
+                explodeEarth(inputEllipsoids[e]);
+            }
+        }
+        exploding++;
+    }
+
     // update models
     updateModels();
 
@@ -1255,7 +1306,7 @@ function renderModelsSorted() {
     
     // set up projection and view
     // mat4.fromScaling(hMatrix,vec3.fromValues(-1,1,1)); // create handedness matrix
-    mat4.perspective(pMatrix,0.5*Math.PI,1,0.1,10); // create projection matrix
+    mat4.perspective(pMatrix,0.5*Math.PI,1,0.1,100); // create projection matrix
     mat4.lookAt(vMatrix,Eye,Center,Up); // create view matrix
     mat4.multiply(vMatrix,vMatrix,viewMatrix); // create view matrix
     mat4.multiply(pvMatrix,pvMatrix,pMatrix); // projection
