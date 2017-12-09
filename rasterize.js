@@ -58,7 +58,8 @@ var viewDelta = 0; // how much to displace view with each key press
 
 // textures
 var textures = new Array()  // array for holding textures, [tag: '', src: '', texture: WebGLTexture]
-var pngs = ['shot', 'stars', 'explosion1', 'explosion2', 'explosion3', 'explosion4', 'explosion5', 'explosion6', 'explosion7']
+var pngs = ['shot', 'stars', 'explosion1', 'explosion2', 'explosion3', 'explosion4', 'explosion5', 'explosion6',
+    'explosion7', 'highlight']
 var jpgs = ['asteroid', 'earth', 'sun', 'deathstar']
 var gifs = []
 var loaded = 0;
@@ -161,12 +162,16 @@ function handleKeyDown(event) {
     switch (event.code) {
         // switching between space stations
         case "ArrowUp":
-                current_center++;
-                changeStation();
+                if (base_limit != -1) {
+                    current_center++;
+                    changeStation();
+                }
             break;
         case "ArrowDown":
-                current_center--;
-                changeStation();
+                if (base_limit != -1) {
+                    current_center--;
+                    changeStation();
+                }
             break;
         // view change
         case "KeyA": // rotate left across earth
@@ -1082,6 +1087,13 @@ function checkCollision(a, b) {
             console.log("Station Hit! Health: " + b.health);
             if (b.health == 0) {
                 base_limit--;
+                // reduce shield alpha by one to signify weakening
+                for (var o in inputEllipsoids) {
+                    if (inputEllipsoids[o].tag == 'shield') {
+                        inputEllipsoids[o].alpha--;
+                    }
+                }
+                // if the destroyed center is highlighted, switch to next
                 if (b.id == current_center) {
                     for (var s in stations) {
                         if (stations[s].id > b.id) {
@@ -1091,10 +1103,12 @@ function checkCollision(a, b) {
                     current_center++;
                     changeStation();
                 }
+                // remove the destroyed station
                 station_centers.splice(b.id, 1);
                 deleteModel(b);
                 shield_level--;
                 console.log("Station down! Shield Power at: " + shield_level);
+                // destroy shield if no more stations
                 if (shield_level == 0) {
                     for (var o in inputEllipsoids) {
                         if (inputEllipsoids[o].tag == 'shield') {
@@ -1103,6 +1117,7 @@ function checkCollision(a, b) {
                             break;
                         }
                     }
+                    deleteModel(highlight);
                 }
             }
         } else if (b.tag == 'shield') {
