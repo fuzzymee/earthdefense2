@@ -65,6 +65,7 @@ var loaded = 0;
 var exFrame = 1;
 var asteroids = [];
 var explosions = [];
+var stations = [];
 var highlight = null;
 
 // game variables
@@ -81,6 +82,7 @@ var score = 0;
 var station_health = 10;
 var earth_health = 50;
 var shield_level = 3;
+var base_limit = 2;
 var frame = 0;
 var framerate = 2;
 
@@ -112,6 +114,19 @@ function getJSONFile(url,descr) {
         return(String.null);
     }
 } // end get input json file
+
+function changeStation() {
+    if (current_center > base_limit) {
+        current_center = 0;
+    }
+    if (current_center < 0) {
+        current_center = base_limit;
+    }
+    highlight.translation = vec3.fromValues(station_centers[current_center][0], station_centers[current_center][1],
+            station_centers[current_center][2]);
+    console.log(highlight);
+    console.log(current_center);
+}
 
 // does stuff when keys are pressed
 function handleKeyDown(event) {
@@ -147,17 +162,11 @@ function handleKeyDown(event) {
         // switching between space stations
         case "ArrowUp":
                 current_center++;
-                if (current_center > 2) {
-                    current_center = 0;
-                }
-                console.log(current_center);
+                changeStation();
             break;
         case "ArrowDown":
                 current_center--;
-                if (current_center < 0) {
-                    current_center = 2;
-                }
-                console.log(current_center);
+                changeStation();
             break;
         // view change
         case "KeyA": // rotate left across earth
@@ -483,8 +492,12 @@ function loadModels() {
                     if (ellipsoid.tag == 'asteroid') {
                         asteroids.push(ellipsoid);
                     }
-                    if (ellipse.tag == 'highlight') {
-                        ellipse.translation = vec3.fromValues(station_centers[0][0], station_centers[0][1], station_centers[0][2]);
+                    if (ellipsoid.tag == 'highlight') {
+                        ellipsoid.translation = vec3.fromValues(station_centers[0][0], station_centers[0][1], station_centers[0][2]);
+                        highlight = ellipsoid;
+                    }
+                    if (ellipsoid.tag == 'station') {
+                        stations.push(ellipsoid);
                     }
                     ellipsoid.index = curInd;
                     curInd++;
@@ -1068,6 +1081,17 @@ function checkCollision(a, b) {
             b.health -= 5;
             console.log("Station Hit! Health: " + b.health);
             if (b.health == 0) {
+                base_limit--;
+                if (b.id == current_center) {
+                    for (var s in stations) {
+                        if (stations[s].id > b.id) {
+                            stations[s].id--;
+                        }
+                    }
+                    current_center++;
+                    changeStation();
+                }
+                station_centers.splice(b.id, 1);
                 deleteModel(b);
                 shield_level--;
                 console.log("Station down! Shield Power at: " + shield_level);
