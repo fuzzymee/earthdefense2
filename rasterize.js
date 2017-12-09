@@ -147,12 +147,14 @@ function handleKeyDown(event) {
                 if (current_center > 2) {
                     current_center = 0;
                 }
+                console.log(current_center);
             break;
         case "ArrowDown":
                 current_center--;
                 if (current_center < 0) {
                     current_center = 2;
                 }
+                console.log(current_center);
             break;
         // view change
         case "KeyA": // rotate left across earth
@@ -809,11 +811,30 @@ function updateModels() {
     }
 }
 
+function stationTarget(def) {
+    var target = vec3.fromValues(def[0], def[1], def[2]);
+    var closest = null;
+    var dist = 100;
+    var temp = 0;
+    for (a in asteroids) {
+        temp = vec3.length(vec3.subtract(vec3.create(), vec3.fromValues(asteroids[a].x, asteroids[a].y, asteroids[a].z),
+            vec3.fromValues(def[0], def[1], def[2])));
+        if (temp < dist) {
+            dist = temp;
+            closest = asteroids[a];
+        }
+    }
+    if (closest !== null) {
+        target = vec3.add(vec3.create(), vec3.fromValues(closest.x, closest.y, closest.x), closest.translation);
+    }
+    return target;
+}
+
 //function for generating the shot
 function generateShot(origin) {
     var ellipsoid = {};
     var location = station_centers[current_center];
-    var target = vec3.add(vec3.create(), vec3.fromValues(location[0], location[1], location[2]), vec3.fromValues(0, 0, 5));
+    var target = stationTarget(location);
 
     ellipsoid.x = location[0]; ellipsoid.y = location[1]; ellipsoid.z = location[2];
     ellipsoid.a = 0.1; ellipsoid.b = 0.1; ellipsoid.c = 0.1;
@@ -892,8 +913,8 @@ function getAsteroidTarget(spawnLocation) {
 function spawnAsteroid() {
     var spawnLocation = getSpotOnSphere(0, 0, 0, 10);
     var target = getAsteroidTarget(spawnLocation);
-    //console.log("spawn: " + spawnLocation);
-    //console.log("target: " + target);
+    console.log("spawn: " + spawnLocation);
+    console.log("target: " + target);
 
     //
     var ellipsoid = {};
@@ -976,8 +997,7 @@ function checkCollision(a, b) {
     var aRad = (a.a + a.b + a.c) / 3;
     var bRad = (b.a + b.b + b.c) / 3;
     var aPos = vec3.create();
-    //console.log(a);
-    //console.log(b);
+
     vec3.add(aPos, a.center, a.translation);
     var bPos = vec3.create();
     vec3.add(bPos, b.center, b.translation);
@@ -1040,7 +1060,9 @@ function renderModelsSorted() {
 
     if (loaded == textures.length) {
         finishLoadingTextures();
+        console.log(loaded);
         loaded++;
+        console.log(loaded);
     }
 
     // check collisions
