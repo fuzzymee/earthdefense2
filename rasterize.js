@@ -477,6 +477,9 @@ function loadModels() {
                     ellipsoid.yAxis = vec3.fromValues(0,1,0); // ellipsoid Y axis 
                     ellipsoid.center = vec3.fromValues(ellipsoid.x,ellipsoid.y,ellipsoid.z); // locate ellipsoid ctr
                     ellipsoid.longevity = 0;
+                    if (ellipsoid.tag == 'asteroid') {
+                        asteroids.push(ellipsoid);
+                    }
                     ellipsoid.index = curInd;
                     curInd++;
 
@@ -520,6 +523,10 @@ function loadModels() {
         console.log(e);
     } // end catch
 } // end load models
+
+function getLength(a, b) {
+    return Math.sqrt((Math.pow(b[0] - a[0], 2) + Math.pow(b[1] - a[1], 2) + Math.pow(b[2] - a[2], 2)));
+}
 
 // setup the webGL shaders
 function setupShaders() {
@@ -817,8 +824,7 @@ function stationTarget(def) {
     var dist = 100;
     var temp = 0;
     for (a in asteroids) {
-        temp = vec3.length(vec3.subtract(vec3.create(), vec3.fromValues(asteroids[a].x, asteroids[a].y, asteroids[a].z),
-            vec3.fromValues(def[0], def[1], def[2])));
+        temp = getLength(vec3.fromValues(asteroids[a].x, asteroids[a].y, asteroids[a].z), def);
         if (temp < dist) {
             dist = temp;
             closest = asteroids[a];
@@ -827,6 +833,7 @@ function stationTarget(def) {
     if (closest !== null) {
         target = vec3.add(vec3.create(), vec3.fromValues(closest.x, closest.y, closest.x), closest.translation);
     }
+
     return target;
 }
 
@@ -835,6 +842,7 @@ function generateShot(origin) {
     var ellipsoid = {};
     var location = station_centers[current_center];
     var target = stationTarget(location);
+    console.log(target);
 
     ellipsoid.x = location[0]; ellipsoid.y = location[1]; ellipsoid.z = location[2];
     ellipsoid.a = 0.1; ellipsoid.b = 0.1; ellipsoid.c = 0.1;
@@ -852,8 +860,7 @@ function generateShot(origin) {
     ellipsoid.on = false;
     ellipsoid.tag = 'shot';
     ellipsoid.longevity = 0;
-    ellipsoid.direction = vec3.subtract(vec3.create(), vec3.fromValues(target[0], target[1], target[2]),
-        vec3.fromValues(ellipsoid.x, ellipsoid.y, ellipsoid.z));
+    ellipsoid.direction = target;
     ellipsoid.index = curInd;
     curInd++
 
