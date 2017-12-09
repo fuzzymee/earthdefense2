@@ -186,13 +186,6 @@ function handleKeyDown(event) {
             generateShot();
             break;
     } // end switch
-
-    // resort by depth by model or triangle
-    if (renderType == 0) {
-        sortModels();
-    } else {
-        sortModels();
-    }
 } // end handleKeyDown
 
 function setupTextures() {
@@ -403,6 +396,8 @@ function generateShot(origin) {
     ellipsoid.longevity = 0;
     ellipsoid.direction = vec3.subtract(vec3.create(), vec3.fromValues(target[0], target[1], target[2]),
         vec3.fromValues(ellipsoid.x, ellipsoid.y, ellipsoid.z));
+    ellipsoid.index = curInd;
+    curInd++
 
     ellipsoidModel = makeEllipsoid(ellipsoid,32);
     ellipsoid.glNormals = ellipsoidModel.normals;
@@ -453,6 +448,9 @@ function loadModels() {
             // process each triangle set to load webgl vertex and triangle buffers
             numTriangleSets = inputTriangles.length; // remember how many tri sets
             for (var whichSet=0; whichSet<numTriangleSets; whichSet++) { // for each tri set
+
+                inputTriangles[whichSet].index = curInd;
+                curInd++;
                 
                 // set up hilighting, modeling translation and rotation
                 inputTriangles[whichSet].center = vec3.fromValues(0,0,0);  // center point of tri set
@@ -528,6 +526,8 @@ function loadModels() {
                     ellipsoid.yAxis = vec3.fromValues(0,1,0); // ellipsoid Y axis 
                     ellipsoid.center = vec3.fromValues(ellipsoid.x,ellipsoid.y,ellipsoid.z); // locate ellipsoid ctr
                     ellipsoid.longevity = 0;
+                    ellipsoid.index = curInd;
+                    curInd++;
 
                     vec3.set(minXYZ,ellipsoid.x-ellipsoid.a,ellipsoid.y-ellipsoid.b,ellipsoid.z-ellipsoid.c); 
                     vec3.set(maxXYZ,ellipsoid.x+ellipsoid.a,ellipsoid.y+ellipsoid.b,ellipsoid.z+ellipsoid.c); 
@@ -811,19 +811,8 @@ function deleteModel(model) {
             }
         }
     }
-
-    if (model.shape == "ellipsoid") {
-        vertexBuffers.splice(model.whichEllipsoid + numTriangleSets, 1);
-        normalBuffers.splice(model.whichEllipsoid + numTriangleSets, 1);
-        textureBuffers.splice(model.whichEllipsoid + numTriangleSets, 1);
-        triSetSizes.splice(model.whichEllipsoid + numTriangleSets, 1);
-        triangleBuffers.splice(model.whichEllipsoid + numTriangleSets, 1);
-        inputEllipsoids.splice(model.whichEllipsoid, 1);
-    }
     
-    sortModels();
-
-    console.log(vertexBuffers);
+    inputEllipsoids.splice(model.whichEllipsoid, 1);
 }
 
 
@@ -927,6 +916,9 @@ function spawnAsteroid() {
     ellipsoid.direction = vec3.subtract(vec3.create(), vec3.fromValues(target[0], target[1], target[2]),
         vec3.fromValues(ellipsoid.x, ellipsoid.y, ellipsoid.z));
     //ellipsoid.rotation = add random rotation?
+
+    ellipsoid.index = curInd;
+    curInd++;
 
     ellipsoidModel = makeEllipsoid(ellipsoid,32);
     ellipsoid.glNormals = ellipsoidModel.normals;
@@ -1045,9 +1037,7 @@ function renderModelsSorted() {
 
     if (loaded == textures.length) {
         finishLoadingTextures();
-        console.log(loaded);
         loaded++;
-        console.log(loaded);
     }
 
     // check collisions
@@ -1144,11 +1134,11 @@ function renderModelsSorted() {
             gl.uniform1f(alphaULoc,currSet.material.alpha); // pass in the alpha value
             
             // vertex buffer: activate and feed into vertex shader
-            gl.bindBuffer(gl.ARRAY_BUFFER,vertexBuffers[inputOpaque[m].whichTriSet]); // activate
+            gl.bindBuffer(gl.ARRAY_BUFFER,vertexBuffers[inputOpaque[m].index]); // activate
             gl.vertexAttribPointer(vPosAttribLoc,3,gl.FLOAT,false,0,0); // feed
-            gl.bindBuffer(gl.ARRAY_BUFFER,normalBuffers[inputOpaque[m].whichTriSet]); // activate
+            gl.bindBuffer(gl.ARRAY_BUFFER,normalBuffers[inputOpaque[m].index]); // activate
             gl.vertexAttribPointer(vNormAttribLoc,3,gl.FLOAT,false,0,0); // feed
-            gl.bindBuffer(gl.ARRAY_BUFFER,textureBuffers[inputOpaque[m].whichTriSet]); // activate
+            gl.bindBuffer(gl.ARRAY_BUFFER,textureBuffers[inputOpaque[m].index]); // activate
             gl.vertexAttribPointer(vTexAttribLoc,2,gl.FLOAT,false,0,0); // feed
 
             // activate texture
@@ -1157,13 +1147,14 @@ function renderModelsSorted() {
             gl.uniform1i(samplerUniform, 0);
 
             // triangle buffer: activate and render
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,triangleBuffers[inputOpaque[m].whichTriSet]); // activate
-            gl.drawElements(gl.TRIANGLES,3*triSetSizes[inputOpaque[m].whichTriSet],gl.UNSIGNED_SHORT,0); // render
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,triangleBuffers[inputOpaque[m].index]); // activate
+            gl.drawElements(gl.TRIANGLES,3*triSetSizes[inputOpaque[m].index],gl.UNSIGNED_SHORT,0); // render
         } else {
             // render ellipsoid
             var ellipsoid, instanceTransform = mat4.create(); // the current ellipsoid and material
             ellipsoid = inputOpaque[m];
             var ind = numTriangleSets+parseInt(inputOpaque[m].whichEllipsoid);
+            var index = inputOpaque[m].index;
 
             // find texture
             currTex = findTexture(ellipsoid, inputOpaque[m].shape);
@@ -1181,12 +1172,12 @@ function renderModelsSorted() {
             gl.uniform1f(shininessULoc,ellipsoid.n); // pass in the specular exponent
             gl.uniform1f(alphaULoc,ellipsoid.alpha); // pass in the alpha value
 
-            gl.bindBuffer(gl.ARRAY_BUFFER,vertexBuffers[ind]); // activate vertex buffer
+            gl.bindBuffer(gl.ARRAY_BUFFER,vertexBuffers[index]); // activate vertex buffer
             gl.vertexAttribPointer(vPosAttribLoc,3,gl.FLOAT,false,0,0); // feed vertex buffer to shader
-            gl.bindBuffer(gl.ARRAY_BUFFER,normalBuffers[ind]); // activate normal buffer
+            gl.bindBuffer(gl.ARRAY_BUFFER,normalBuffers[index]); // activate normal buffer
             gl.vertexAttribPointer(vNormAttribLoc,3,gl.FLOAT,false,0,0); // feed normal buffer to shader
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,triangleBuffers[ind]); // activate tri buffer
-            gl.bindBuffer(gl.ARRAY_BUFFER,textureBuffers[ind]); // activate
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,triangleBuffers[index]); // activate tri buffer
+            gl.bindBuffer(gl.ARRAY_BUFFER,textureBuffers[index]); // activate
             gl.vertexAttribPointer(vTexAttribLoc,2,gl.FLOAT,false,0,0); // feed
         
             // activate texture
@@ -1195,7 +1186,7 @@ function renderModelsSorted() {
             gl.uniform1i(samplerUniform, 0)
                 
             // draw a transformed instance of the ellipsoid
-            gl.drawElements(gl.TRIANGLES,triSetSizes[ind],gl.UNSIGNED_SHORT,0); // render
+            gl.drawElements(gl.TRIANGLES,triSetSizes[index],gl.UNSIGNED_SHORT,0); // render
         }
     }
 
@@ -1222,11 +1213,11 @@ function renderModelsSorted() {
             gl.uniform1f(alphaULoc,currSet.material.alpha); // pass in the alpha value
             
             // vertex buffer: activate and feed into vertex shader
-            gl.bindBuffer(gl.ARRAY_BUFFER,vertexBuffers[inputTranslucent[m].whichTriSet]); // activate
+            gl.bindBuffer(gl.ARRAY_BUFFER,vertexBuffers[inputTranslucent[m].index]); // activate
             gl.vertexAttribPointer(vPosAttribLoc,3,gl.FLOAT,false,0,0); // feed
-            gl.bindBuffer(gl.ARRAY_BUFFER,normalBuffers[inputTranslucent[m].whichTriSet]); // activate
+            gl.bindBuffer(gl.ARRAY_BUFFER,normalBuffers[inputTranslucent[m].index]); // activate
             gl.vertexAttribPointer(vNormAttribLoc,3,gl.FLOAT,false,0,0); // feed
-            gl.bindBuffer(gl.ARRAY_BUFFER,textureBuffers[inputTranslucent[m].whichTriSet]); // activate
+            gl.bindBuffer(gl.ARRAY_BUFFER,textureBuffers[inputTranslucent[m].index]); // activate
             gl.vertexAttribPointer(vTexAttribLoc,2,gl.FLOAT,false,0,0); // feed
 
             // activate texture
@@ -1235,13 +1226,14 @@ function renderModelsSorted() {
             gl.uniform1i(samplerUniform, 0)
 
             // triangle buffer: activate and render
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,triangleBuffers[inputTranslucent[m].whichTriSet]); // activate
-            gl.drawElements(gl.TRIANGLES,3*triSetSizes[inputTranslucent[m].whichTriSet],gl.UNSIGNED_SHORT,0); // render
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,triangleBuffers[inputTranslucent[m].index]); // activate
+            gl.drawElements(gl.TRIANGLES,3*triSetSizes[inputTranslucent[m].index],gl.UNSIGNED_SHORT,0); // render
         } else {
             // render ellipsoid
             var ellipsoid, instanceTransform = mat4.create(); // the current ellipsoid and material
             ellipsoid = inputTranslucent[m];
             var ind = numTriangleSets+parseInt(inputTranslucent[m].whichEllipsoid);
+            var index = inputTranslucent[m].index;
 
             // find texture
             currTex = findTexture(ellipsoid, inputTranslucent[m].shape);
@@ -1259,12 +1251,12 @@ function renderModelsSorted() {
             gl.uniform1f(shininessULoc,ellipsoid.n); // pass in the specular exponent
             gl.uniform1f(alphaULoc,ellipsoid.alpha); // pass in the alpha value
 
-            gl.bindBuffer(gl.ARRAY_BUFFER,vertexBuffers[ind]); // activate vertex buffer
+            gl.bindBuffer(gl.ARRAY_BUFFER,vertexBuffers[index]); // activate vertex buffer
             gl.vertexAttribPointer(vPosAttribLoc,3,gl.FLOAT,false,0,0); // feed vertex buffer to shader
-            gl.bindBuffer(gl.ARRAY_BUFFER,normalBuffers[ind]); // activate normal buffer
+            gl.bindBuffer(gl.ARRAY_BUFFER,normalBuffers[index]); // activate normal buffer
             gl.vertexAttribPointer(vNormAttribLoc,3,gl.FLOAT,false,0,0); // feed normal buffer to shader
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,triangleBuffers[ind]); // activate tri buffer
-            gl.bindBuffer(gl.ARRAY_BUFFER,textureBuffers[ind]); // activate
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,triangleBuffers[index]); // activate tri buffer
+            gl.bindBuffer(gl.ARRAY_BUFFER,textureBuffers[index]); // activate
             gl.vertexAttribPointer(vTexAttribLoc,2,gl.FLOAT,false,0,0); // feed
         
             // activate texture
@@ -1273,7 +1265,7 @@ function renderModelsSorted() {
             gl.uniform1i(samplerUniform, 0)
                 
             // draw a transformed instance of the ellipsoid
-            gl.drawElements(gl.TRIANGLES,triSetSizes[ind],gl.UNSIGNED_SHORT,0); // render
+            gl.drawElements(gl.TRIANGLES,triSetSizes[index],gl.UNSIGNED_SHORT,0); // render
         }
     }
 }
@@ -1285,7 +1277,6 @@ function main() {
     setupTextures(); // load textures
     loadModels(); // load in the models from tri file
     setupShaders(); // setup the webGL shaders
-    sortModels(); // sort into opaque and translucent
     renderModelsSorted();
   
 } // end main
