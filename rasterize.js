@@ -80,6 +80,8 @@ var score = 0;
 var station_health = 10;
 var earth_health = 50;
 var shield_level = 2;
+var frame = 0;
+var framerate = 0;
 
 // ASSIGNMENT HELPER FUNCTIONS
 
@@ -997,12 +999,23 @@ function updateAsteroids() {
 
 // animate the explosion sprites
 function animateExplosion(model) {
-    exFrame++;
-    if (exFrame == 8) {
-        //finish explosion
-        exFrame = 1;
+    frame++;
+    
+    if (frame > framerate) {
+
+        exFrame++;
+        if (exFrame == 8) {
+            //finish explosion
+            exFrame = 1;
+        }
+        if (model.shape == "triangle") {
+            model.material.texture = "explosion" + exFrame + ".png";
+        } else {
+            model.texture = "explosion" + exFrame + ".png";
+        }
+
+        frame = 0;
     }
-    model.material.texture = "explosion" + exFrame + ".png";
 }
 
 // look for collision between asteroids and other objects
