@@ -365,20 +365,11 @@ function makeEllipsoid(currEllipsoid,numLongSteps) {
 
 //function for generating the shot
 function generateShot(origin) {
-    var vMatrix = mat4.create(); // view matrix
-    var location = vec3.create();
-    mat4.lookAt(vMatrix,Eye,Center,Up); // create view matrix
-    vec3.scale(location, vec3.fromValues(vMatrix[12], vMatrix[13], vMatrix[14]), -1);
-    console.log(location);
-    //mat4.multiply(vMatrix, vMatrix, viewMatrix);
-    vec3.transformMat4(location,location,viewMatrix); // create view matrix
-    console.log(location);
-
     var ellipsoid = {};
-    var target = vec3.add(vec3.create(), vec3.fromValues(Center[0], Center[1], Center[2]),
-        vec3.fromValues(viewMatrix[2], viewMatrix[6], viewMatrix[10]));
+    var location = station_centers[current_center];
+    var target = vec3.add(vec3.create(), vec3.fromValues(location[0], location[1], location[2]), vec3.fromValues(0, 0, 5));
 
-    ellipsoid.x = location[0]; ellipsoid.y = location[1]; ellipsoid.z = vMatrix[2];
+    ellipsoid.x = location[0]; ellipsoid.y = location[1]; ellipsoid.z = location[2];
     ellipsoid.a = 0.1; ellipsoid.b = 0.1; ellipsoid.c = 0.1;
     ellipsoid.translation = vec3.fromValues(0,0,0); // ellipsoids begin without translation
     ellipsoid.xAxis = vec3.fromValues(1,0,0); // ellipsoid X axis
