@@ -514,6 +514,9 @@ function loadModels() {
                     if (ellipsoid.tag == 'station') {
                         stations.push(ellipsoid);
                     }
+                    if (ellipsoid.tag == 'moon') {
+                        ellipsoid.translation = vec3.fromValues(0, 0, 2);
+                    }
                     ellipsoid.index = curInd;
                     curInd++;
 
@@ -1221,7 +1224,7 @@ function updateModels() {
                 }
             }
             if (inputOpaque[m].tag == 'moon') {
-                vec3.rotateY(inputOpaque[m].center, inputOpaque[m].center,
+                vec3.rotateY(inputOpaque[m].translation, inputOpaque[m].translation,
                     vec3.fromValues(0,0,0), 1);
             }
         }
