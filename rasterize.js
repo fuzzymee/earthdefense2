@@ -204,19 +204,19 @@ function handleKeyDown(event) {
                 break;
             case "Space":
                 if (station_centers[current_center][5]) {
+                    station_centers[current_center][4] = 0;
                     var snd = new Audio(TEXTURES_URL + "Missile_Launching.mp3");
                     snd.play();
                     generateShot();
                     station_centers[current_center][5] = false;
                     if (station_centers[current_center][3] == 'Alpha') {
-                        document.getElementById("station1").innerHTML = "Station Alpha: " + b.health;
+                        document.getElementById("station1").innerHTML = "Station Alpha: Ready";
                     } else if (station_centers[current_center][3] == 'Beta') {
-                        document.getElementById("station2").innerHTML = "Station Beta: " + b.health;
+                        document.getElementById("station2").innerHTML = "Station Beta: Ready";
                     } else if (station_centers[current_center][3] == 'Charlie') {
-                        document.getElementById("station3").innerHTML = "Station Charlie: " + b.health;
+                        document.getElementById("station3").innerHTML = "Station Charlie: Ready";
                     }
                 }
-                station_centers[current_center][4] = 0;
                 break;
             case "KeyP":
                 if (loaded == textures.length) {
@@ -1155,8 +1155,8 @@ function checkCollision(a, b) {
             //handle collision
             if (b.tag == 'shot') {
                 // destroy asteroid and shot, give player points
-                apocalypse = true;
-                gameOver(b);
+                //test *******apocalypse = true;
+                //test *******gameOver(b);
                 deleteModel(b);
                 score += 10;
                 document.getElementById("score").innerHTML = "Score: " + score;
