@@ -993,7 +993,7 @@ function generateExplosion(location, boom) {
     var spawnLocation = location;
     var snd = new Audio(TEXTURES_URL + "Explosion.mp3");
     snd.play();
-    
+
     //initialize the ellipsoid
     var ellipsoid = {};
     ellipsoid.x = spawnLocation[0]; ellipsoid.y = spawnLocation[1]; ellipsoid.z = spawnLocation[2];
@@ -1591,6 +1591,8 @@ function restart() {
     document.getElementById("selected").innerHTML = "Selected Station: Alpha";
     
     loadModels();
+    var snd = new Audio(TEXTURES_URL + "Game_Start.mp3");
+    snd.play();
 }
 
 /* MAIN -- HERE is where execution begins after window load */
@@ -1599,6 +1601,11 @@ function main() {
     setupWebGL(); // set up the webGL environment
     setupTextures(); // load textures
     loadModels(); // load in the models from tri file
+    var snd = new Audio(TEXTURES_URL + "Game_Start.mp3");
+    snd.play();
+    var snd2 = new Audio(TEXTURES_URL + "Game_Music.mp3");
+    snd2.currentTime=0;
+    snd2.play();
     setupShaders(); // setup the webGL shaders
     renderModelsSorted();
   
