@@ -75,9 +75,9 @@ var timer = 0;
 var spawn = 10;
 var current_center = 0;
 var station_centers = [
-    [0, 0, 0.5],
-    [-0.35, 0, -0.35],
-    [0.35, 0, -0.35]
+    [0, 0, 0.5, "Alpha"],
+    [-0.35, 0, -0.35, "Beta"],
+    [0.35, 0, -0.35, "Charlie"]
 ];
 var score = 0;
 var station_health = 10;
@@ -135,10 +135,11 @@ function changeStation() {
     if (current_center < 0) {
         current_center = base_limit;
     }
-    console.log(station_centers);
     highlight.translation = vec3.fromValues(station_centers[current_center][0], station_centers[current_center][1],
             station_centers[current_center][2]);
-    console.log("Current Station: " + current_center);
+
+    document.getElementById("selected").innerHTML = "Selected Station: " + station_centers[current_center][3];
+
 }
 
 // does stuff when keys are pressed
@@ -1121,7 +1122,6 @@ function checkCollision(a, b) {
                 deleteModel(b);
                 score += 10;
                 document.getElementById("score").innerHTML = "Score: " + score;
-                console.log("Score: " + score)
             } else if (b.tag == 'station') {
                 // destroy asteroid, damage station and destroy if life < 0 then weaken shield
                 // if last station destroyed, destroy shield as wells
@@ -1133,10 +1133,9 @@ function checkCollision(a, b) {
                 } else {
                     document.getElementById("station3").innerHTML = "Station Charlie: " + b.health;
                 }
-                console.log("Station Hit! Health: " + b.health);
                 if (b.health == 0) {
+                    var change = false;
                     base_limit--;
-                    document.getElementById("shield").innerHTML = "Shield: " + shield_level;
                     // reduce shield alpha by one to signify weakening
                     for (var o in inputEllipsoids) {
                         if (inputEllipsoids[o].tag == 'shield') {
@@ -1150,19 +1149,22 @@ function checkCollision(a, b) {
                                 stations[s].id--;
                             }
                         }
-                        current_center++;
-                        changeStation();
+                        change = true;
                     }
                     // remove the destroyed station
                     station_centers.splice(b.id, 1);
                     deleteModel(b);
+                    // has to be after splice/delete or else will access out of date station_centers
+                    if (change) {
+                        current_center++;
+                        changeStation();
+                    }
                     shield_level--;
-                    console.log("Station down! Shield Power at: " + shield_level);
+                    document.getElementById("shield").innerHTML = "Shield: " + shield_level;
                     // destroy shield if no more stations
                     if (shield_level == 0) {
                         for (var o in inputEllipsoids) {
                             if (inputEllipsoids[o].tag == 'shield') {
-                                console.log("This is bad! The shields are down!");
                                 deleteModel(inputEllipsoids[o]);
                                 break;
                             }
@@ -1178,7 +1180,6 @@ function checkCollision(a, b) {
                 if (earth_health <= 0) {
                     for (var o in inputEllipsoids) {
                         if (inputEllipsoids[o].tag == 'earth') {
-                            console.log("NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!");
                             // handle game over
                             gameOver(inputEllipsoids[o]);
                             break;
@@ -1192,14 +1193,11 @@ function checkCollision(a, b) {
                 console.log("Direct hit! Health: " + earth_health);
                 if (earth_health <= 0) {
                     // handle game over
-                    console.log("NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!");
                     gameOver(b);
                 }
             } else if (b.tag == 'moon') {
                 b.health -= 5;
-                console.log("Oh no! The moon took damage!");
                 if (b.health <= 0) {
-                    console.log("We lost the moon!");
                     generateExplosion(vec3.add(vec3.create(), vec3.fromValues(b.x, b.y, b.z),
                         vec3.fromValues(b.translation[0], b.translation[1], b.translation[2])), true);
                     deleteModel(b);
@@ -1262,7 +1260,6 @@ function renderModelsSorted() {
     if (loaded == textures.length) {
         finishLoadingTextures();
         loaded++;
-        console.log("Textures Loaded");
     }
 
     // check collisions
@@ -1520,6 +1517,7 @@ function restart() {
     inputTranslucent = new Array(); // translucent models
     inputModels = new Array(); // models sorted by depth
     inputTrianglesSorted = new Array(); // triangles sorted by depth
+    viewMatrix = mat4.create();
     
     curInd = 0;
     
@@ -1538,9 +1536,9 @@ function restart() {
     timer = 0;
     spawn = 10;
     station_centers = [
-        [0, 0, 0.5],
-        [-0.35, 0, -0.35],
-        [0.35, 0, -0.35]
+        [0, 0, 0.5, "Alpha"],
+        [-0.35, 0, -0.35, "Beta"],
+        [0.35, 0, -0.35, "Charlie"]
     ];
     current_center = 0;
 
@@ -1553,6 +1551,14 @@ function restart() {
     exploding = 0;
     paused = false;
     apocalypse = false;
+
+    document.getElementById("station1").innerHTML = "Station Alpha: 10";
+    document.getElementById("station2").innerHTML = "Station Beta: 10";
+    document.getElementById("station3").innerHTML = "Station Charlie: 10";
+    document.getElementById("score").innerHTML = "Score: " + score;
+    document.getElementById("shield").innerHTML = "Shield: " + shield_level;
+    document.getElementById("earth").innerHTML = "Earth: " + earth_health;
+    document.getElementById("selected").innerHTML = "Selected Station: Alpha";
     
     loadModels();
 }

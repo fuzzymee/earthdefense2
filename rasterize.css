@@ -28,44 +28,70 @@
 
   .footer__content-text {
     text-align: center;
-    margin-top: -10px;
+    margin-top: -15px;
     padding: 15px 20px;
   }
   
   .score {
     text-align: right;
-    margin-top: -75px;
+    margin-top: -70px;
     margin-right: 20px;
+    font-weight: bold;
+    color: purple;
   }
 
   .shield {
     text-align: right;
     margin-top: 0px;
     margin-right: 20px;
+    font-weight: bold;
+    color: purple;
   }
 
   .earth {
     text-align: right;
     margin-top: 0px;
     margin-right: 20px;
+    font-weight: bold;
+    color: purple;
   }
 
   .alpha {
     text-align: left;
     margin-top: -100px;
-    margin-left: 5px;
+    margin-left: 20px;
+    font-weight: bold;
+    color: purple;
   }
 
   .beta {
     text-align: left;
     margin-top: 0px;
-    margin-left: 5px;
+    margin-left: 20px;
+    font-weight: bold;
+    color: purple;
   }
 
   .charlie {
     text-align: left;
     margin-top: 0px;
-    margin-left: 5px;
+    margin-left: 20px;
+    font-weight: bold;
+    color: purple;
+  }
+
+  .selected {
+    text-align: center;
+    margin-top: -70px;
+    font-weight: bold;
+    color: purple;
+    font-size: 14pt;
+  }
+
+  .restart {
+    text-align: center;
+    margin-top: 0px;
+    font-size: 8pt;
   }
 
   .page__content-container {
