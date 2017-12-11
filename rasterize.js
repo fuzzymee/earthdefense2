@@ -216,6 +216,13 @@ function handleKeyDown(event) {
                 }
                 station_centers[current_center][4] = 0;
                 break;
+            case "KeyP":
+                if (loaded) {
+                    renderModelsSorted();
+                    var snd = new Audio(TEXTURES_URL + "Game_Start.mp3");
+                    snd.play();
+                }
+                break;
         } // end switch
     }
     switch (event.code) {
@@ -293,14 +300,14 @@ function setupWebGL() {
       // Get the image canvas, render an image in it
      var imageCanvas = document.getElementById("myImageCanvas"); // create a 2d canvas
       var cw = imageCanvas.width, ch = imageCanvas.height; 
-      /*imageContext = imageCanvas.getContext("2d"); 
+      imageContext = imageCanvas.getContext("2d"); 
       var bkgdImage = new Image(); 
       bkgdImage.crossOrigin = "Anonymous";
-      bkgdImage.src = "https://ncsucgclass.github.io/prog3/sky.jpg";
+      bkgdImage.src = TEXTURES_URL + "Game_Start.png";
       bkgdImage.onload = function(){
           var iw = bkgdImage.width, ih = bkgdImage.height;
           imageContext.drawImage(bkgdImage,0,0,iw,ih,0,0,cw,ch);   
-     } // end onload callback*/
+     } // end onload callback
     
      // create a webgl canvas and set it up
      var webGLCanvas = document.getElementById("myWebGLCanvas"); // create a webgl canvas
@@ -309,7 +316,7 @@ function setupWebGL() {
        if (gl == null) {
          throw "unable to create gl context -- is your browser gl ready?";
        } else {
-         gl.clearColor(0.0, 0.0, 0.0, 1.0); // set bg to black
+         //gl.clearColor(0.0, 0.0, 0.0, 1.0); // set bg to black
          gl.clearDepth(1.0); // use max when we clear the depth buffer
          gl.enable(gl.DEPTH_TEST); // use hidden surface removal (with zbuffering)
        }
@@ -1601,12 +1608,10 @@ function main() {
     setupWebGL(); // set up the webGL environment
     setupTextures(); // load textures
     loadModels(); // load in the models from tri file
-    var snd = new Audio(TEXTURES_URL + "Game_Start.mp3");
-    snd.play();
     var snd2 = new Audio(TEXTURES_URL + "Game_Music.mp3");
     snd2.currentTime=0;
     snd2.play();
     setupShaders(); // setup the webGL shaders
-    renderModelsSorted();
+    
   
 } // end main
