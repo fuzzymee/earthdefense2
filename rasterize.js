@@ -91,6 +91,8 @@ var exploding = 0;
 var paused = false;
 var apocalypse = false;
 
+var imageContext;
+
 window.onload = function() {
     document.getElementById("score").innerHTML = score;
 }
@@ -219,6 +221,7 @@ function handleKeyDown(event) {
             case "KeyP":
                 if (loaded == textures.length) {
                     gl.clearColor(0.0, 0.0, 0.0, 1.0);
+                    imageContext.clearRect(0,0,1100,650);
                     renderModelsSorted();
                     var snd = new Audio(TEXTURES_URL + "Game_Start.mp3");
                     snd.play();
@@ -1088,6 +1091,16 @@ function animateExplosion(model) {
     }
 }
 
+function endgameScreen() {
+    var bkgdImage = new Image(); 
+    bkgdImage.crossOrigin = "Anonymous";
+    bkgdImage.src = TEXTURES_URL + "Game_End.jpg";
+    bkgdImage.onload = function(){
+        var iw = bkgdImage.width, ih = bkgdImage.height;
+        imageContext.drawImage(bkgdImage,0,0,iw,ih,0,0,1150,650);  
+    }
+}
+
 // blow up the earth for game over
 function explodeEarth(earth) {
     if (exploding < 300) {
@@ -1099,6 +1112,7 @@ function explodeEarth(earth) {
         generateExplosion(location, true);
     } else {
         deleteModel(earth);
+        endgameScreen();
     }
 }
 
@@ -1141,8 +1155,8 @@ function checkCollision(a, b) {
             //handle collision
             if (b.tag == 'shot') {
                 // destroy asteroid and shot, give player points
-                //test *******apocalypse = true;
-                //test *******gameOver(b);
+                apocalypse = true;
+                gameOver(b);
                 deleteModel(b);
                 score += 10;
                 document.getElementById("score").innerHTML = "Score: " + score;
