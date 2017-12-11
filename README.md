@@ -8,11 +8,15 @@ The Earth will be defenseless once the stations are all striked down. Each stati
 To play:
 
 "Spacebar" - Fire missile
+
 "p" - To start game at the Game Start Screen
 
 "w" - Rotate upward around Earth
+
 "s" - Rotate downward around Earth
+
 "a" - Rotate left around Earth
+
 "d" - Rotate right around Earth
 
 "UpArrow"/"DownArrow" - Select different Stations
