@@ -5,6 +5,8 @@ The game is featured in space and is limited to area around the Earth (with an o
 
 The Earth will be defenseless once the stations are all striked down. Each station is capable of taking two hits. They will be able to automatically shoot the closest asteroid present once the 'Shot' command ("Spacebar") is pressed. A cooldown time is present after a missile has been fired, in which the stations cannot fire further missiles. The player will be able to command different stations by making use of the arrow keys. Scores will be gained whenever an asteroid has been shot down before reaching Earth.
 
+To start off, fire a missile once the universe is visible.
+
 To play:
 
 "Spacebar" - Fire missile
