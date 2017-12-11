@@ -74,10 +74,11 @@ var lifespan = 50;
 var timer = 0;
 var spawn = 10;
 var current_center = 0;
+var recharge = 50;
 var station_centers = [
-    [0, 0, 0.5, "Alpha"],
-    [-0.35, 0, -0.35, "Beta"],
-    [0.35, 0, -0.35, "Charlie"]
+    [0, 0, 0.5, "Alpha", recharge, true],
+    [-0.35, 0, -0.35, "Beta", recharge, true],
+    [0.35, 0, -0.35, "Charlie", recharge, true]
 ];
 var score = 0;
 var station_health = 10;
@@ -200,7 +201,20 @@ function handleKeyDown(event) {
                 finishLoadingTextures();
                 break;
             case "Space":
-                generateShot();
+                if (station_centers[current_center][5]) {
+                    var snd = new Audio(TEXTURES_URL + "Missile_Launching.mp3");
+                    snd.play();
+                    generateShot();
+                    station_centers[current_center][5] = false;
+                    if (station_centers[current_center][3] == 'Alpha') {
+                        document.getElementById("station1").innerHTML = "Station Alpha: " + b.health;
+                    } else if (station_centers[current_center][3] == 'Beta') {
+                        document.getElementById("station2").innerHTML = "Station Beta: " + b.health;
+                    } else if (station_centers[current_center][3] == 'Charlie') {
+                        document.getElementById("station3").innerHTML = "Station Charlie: " + b.health;
+                    }
+                }
+                station_centers[current_center][4] = 0;
                 break;
         } // end switch
     }
@@ -977,7 +991,9 @@ function updateAsteroids() {
 // create an explosion at a given location, increase size if boom
 function generateExplosion(location, boom) {
     var spawnLocation = location;
-
+    var snd = new Audio(TEXTURES_URL + "Explosion.mp3");
+    snd.play();
+    
     //initialize the ellipsoid
     var ellipsoid = {};
     ellipsoid.x = spawnLocation[0]; ellipsoid.y = spawnLocation[1]; ellipsoid.z = spawnLocation[2];
@@ -1207,6 +1223,17 @@ function checkCollision(a, b) {
     }
 }
 
+// recharge stations that need to shoot
+function rechargeStations() {
+    for (s in station_centers) {
+        if (station_centers[s][4] < recharge) {
+            station_centers[s][4]++;
+        } else {
+            station_centers[s][5] = true;
+        }
+    }
+}
+
 // function for running updates on objects where needed
 function updateModels() {
     for (var m in inputOpaque) {
@@ -1285,6 +1312,9 @@ function renderModelsSorted() {
         }
         exploding++;
     }
+
+    // recharge shooting for stations
+    rechargeStations();
 
     // update models
     updateModels();
@@ -1536,9 +1566,9 @@ function restart() {
     timer = 0;
     spawn = 10;
     station_centers = [
-        [0, 0, 0.5, "Alpha"],
-        [-0.35, 0, -0.35, "Beta"],
-        [0.35, 0, -0.35, "Charlie"]
+        [0, 0, 0.5, "Alpha", 50],
+        [-0.35, 0, -0.35, "Beta", 50],
+        [0.35, 0, -0.35, "Charlie", 50]
     ];
     current_center = 0;
 
@@ -1552,9 +1582,9 @@ function restart() {
     paused = false;
     apocalypse = false;
 
-    document.getElementById("station1").innerHTML = "Station Alpha: 10";
-    document.getElementById("station2").innerHTML = "Station Beta: 10";
-    document.getElementById("station3").innerHTML = "Station Charlie: 10";
+    document.getElementById("station1").innerHTML = "Station Alpha: 10    Shot: Ready";
+    document.getElementById("station2").innerHTML = "Station Beta: 10    Shot: Ready";
+    document.getElementById("station3").innerHTML = "Station Charlie: 10    Shot: Ready";
     document.getElementById("score").innerHTML = "Score: " + score;
     document.getElementById("shield").innerHTML = "Shield: " + shield_level;
     document.getElementById("earth").innerHTML = "Earth: " + earth_health;
