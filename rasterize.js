@@ -217,7 +217,8 @@ function handleKeyDown(event) {
                 station_centers[current_center][4] = 0;
                 break;
             case "KeyP":
-                if (loaded) {
+                if (loaded == textures.length) {
+                    gl.clearColor(0.0, 0.0, 0.0, 1.0);
                     renderModelsSorted();
                     var snd = new Audio(TEXTURES_URL + "Game_Start.mp3");
                     snd.play();
