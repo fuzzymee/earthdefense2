@@ -24,6 +24,9 @@
       <p id="station3" class = "charlie"></p>
       <p id="selected" class = "selected"></p>
       <p id="restart" class = "restart">Press [R] to Restart</p>
+      <p id="station1charge" class = "station1charge"></p>
+      <p id="station2charge" class = "station2charge"></p>
+      <p id="station3charge" class = "station3charge"></p>
       <script>
         document.getElementById("score").innerHTML = "Score: " + score;
         document.getElementById("shield").innerHTML = "Shield: " + shield_level;
@@ -32,6 +35,9 @@
         document.getElementById("station3").innerHTML = "Station Charlie: " + 10;
         document.getElementById("earth").innerHTML = "Earth: " + 50;
         document.getElementById("selected").innerHTML = "Selected Station: Alpha";
+        document.getElementByID("station1charge").innerHTML = "Ready!";
+        document.getElementByID("station2charge").innerHTML = "Ready!";
+        document.getElementByID("station3charge").innerHTML = "Ready!";
       </script>
     </div>
     <div class = "page__content-container">

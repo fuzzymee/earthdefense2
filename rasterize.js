@@ -210,11 +210,11 @@ function handleKeyDown(event) {
                     generateShot();
                     station_centers[current_center][5] = false;
                     if (station_centers[current_center][3] == 'Alpha') {
-                        document.getElementById("station1").innerHTML = "Station Alpha: Ready";
+                        document.getElementById("station1charge").innerHTML = "Ready!";
                     } else if (station_centers[current_center][3] == 'Beta') {
-                        document.getElementById("station2").innerHTML = "Station Beta: Ready";
+                        document.getElementById("station2charge").innerHTML = "Ready!";
                     } else if (station_centers[current_center][3] == 'Charlie') {
-                        document.getElementById("station3").innerHTML = "Station Charlie: Ready";
+                        document.getElementById("station3charge").innerHTML = "Ready!";
                     }
                 }
                 break;
