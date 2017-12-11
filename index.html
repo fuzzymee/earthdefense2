@@ -16,6 +16,20 @@
 
     <div class="footer">
       <h1 class = "footer__content-text">EARTH DEFENSE</h1>
+      <p id="score" class = "score"></p>
+      <p id="shield" class = "shield"></p>
+      <p id="earth" class = "earth"></p>
+      <p id="station1" class = "alpha"></p>
+      <p id="station2" class = "beta"></p>
+      <p id="station3" class = "charlie"></p>
+      <script>
+        document.getElementById("score").innerHTML = "Score: " + score;
+        document.getElementById("shield").innerHTML = "Shield: " + shield_level;
+        document.getElementById("station1").innerHTML = "Station Alpha: " + 10;
+        document.getElementById("station2").innerHTML = "Station Beta: " + 10;
+        document.getElementById("station3").innerHTML = "Station Charlie: " + 10;
+        document.getElementById("earth").innerHTML = "Earth: " + 50;
+      </script>
     </div>
     <div class = "page__content-container">
       <h1>EARTH DEFENSE</h1>

@@ -90,6 +90,14 @@ var exploding = 0;
 var paused = false;
 var apocalypse = false;
 
+window.onload = function() {
+    document.getElementById("score").innerHTML = score;
+}
+
+function getScore() {
+    return score;
+}
+
 // ASSIGNMENT HELPER FUNCTIONS
 
 // get the JSON file from the passed URL
@@ -119,6 +127,7 @@ function getJSONFile(url,descr) {
     }
 } // end get input json file
 
+// toggle between existing space stations
 function changeStation() {
     if (current_center > base_limit) {
         current_center = 0;
@@ -134,34 +143,6 @@ function changeStation() {
 
 // does stuff when keys are pressed
 function handleKeyDown(event) {
-    /*
-    const modelEnum = {TRIANGLES: "triangles", ELLIPSOID: "ellipsoid"}; // enumerated model type
-    const dirEnum = {NEGATIVE: -1, POSITIVE: 1}; // enumerated rotation direction
-    
-    function translateModel(offset) {
-        if (handleKeyDown.modelOn != null)
-            vec3.add(handleKeyDown.modelOn.translation,handleKeyDown.modelOn.translation,offset);
-    } // end translate model
-
-    function rotateModel(axis,direction) {
-        if (handleKeyDown.modelOn != null) {
-            var newRotation = mat4.create();
-
-            mat4.fromRotation(newRotation,direction*rotateTheta,axis); // get a rotation matrix around passed axis
-            vec3.transformMat4(handleKeyDown.modelOn.xAxis,handleKeyDown.modelOn.xAxis,newRotation); // rotate model x axis tip
-            vec3.transformMat4(handleKeyDown.modelOn.yAxis,handleKeyDown.modelOn.yAxis,newRotation); // rotate model y axis tip
-        } // end if there is a highlighted model
-    } // end rotate model
-    
-    // set up needed view params
-    var lookAt = vec3.create(), viewRight = vec3.create(), temp = vec3.create(); // lookat, right & temp vectors
-    lookAt = vec3.normalize(lookAt,vec3.subtract(temp,Center,Eye)); // get lookat vector
-    viewRight = vec3.normalize(viewRight,vec3.cross(temp,lookAt,Up)); // get view right vector
-    
-    // highlight static variables
-    handleKeyDown.whichOn = handleKeyDown.whichOn == undefined ? -1 : handleKeyDown.whichOn; // nothing selected initially
-    handleKeyDown.modelOn = handleKeyDown.modelOn == undefined ? null : handleKeyDown.modelOn; // nothing selected initially
-*/
     if (!paused) {
         switch (event.code) {
             // switching between space stations
@@ -229,6 +210,7 @@ function handleKeyDown(event) {
     }
 } // end handleKeyDown
 
+// load the textures
 function setupTextures() {
     for (var p in pngs) {
         textures.push({tag: pngs[p], src: pngs[p] + '.png', texture: null})
@@ -261,10 +243,12 @@ function setupTextures() {
     finishLoadingTextures(); // not sure why this can't happen in image.onload, but works here...
 }
 
+// check if value is a power of 2
 function isPowerOf2(value) {
     return (value  != 0) && ((value & (value - 1)) == 0);
 }
 
+// finish loading textures
 function finishLoadingTextures() {
     for (t in textures) {
         gl.bindTexture(gl.TEXTURE_2D, textures[t].texture);
@@ -272,7 +256,8 @@ function finishLoadingTextures() {
         setupTextureFilteringAndMips(textures[t].image.width, textures[t].image.height);
     }
 }
-  
+
+// setup texture for webgl
 function setupTextureFilteringAndMips(width, height) {
     if (isPowerOf2(width) && isPowerOf2(height)) {
       gl.generateMipmap(gl.TEXTURE_2D);
@@ -515,7 +500,7 @@ function loadModels() {
                         stations.push(ellipsoid);
                     }
                     if (ellipsoid.tag == 'moon') {
-                        ellipsoid.translation = vec3.fromValues(0, 0, 2);
+                        ellipsoid.translation = vec3.fromValues(0, 0, 4);
                     }
                     ellipsoid.index = curInd;
                     curInd++;
@@ -561,6 +546,7 @@ function loadModels() {
     } // end catch
 } // end load models
 
+// length between two points in 3D space
 function getLength(a, b) {
     return Math.sqrt((Math.pow(b[0] - a[0], 2) + Math.pow(b[1] - a[1], 2) + Math.pow(b[2] - a[2], 2)));
 }
@@ -813,13 +799,15 @@ function deleteModel(model) {
     }
 }
 
+// get the target for the selected station's shot
 function stationTarget(def) {
     var target = vec3.fromValues(def[0], def[1], def[2]);
     var closest = null;
     var dist = 100;
     var temp = 0;
     for (a in asteroids) {
-        temp = getLength(vec3.fromValues(asteroids[a].x, asteroids[a].y, asteroids[a].z), def);
+        var aLoc = vec3.add(vec3.create(), vec3.fromValues(asteroids[a].x, asteroids[a].y, asteroids[a].z), asteroids[a].translation);
+        temp = getLength(aLoc, def);
         if (temp < dist) {
             dist = temp;
             closest = asteroids[a];
@@ -832,7 +820,7 @@ function stationTarget(def) {
     return target;
 }
 
-//function for generating the shot
+// function for generating the shot
 function generateShot() {
     var ellipsoid = {};
     var location = station_centers[current_center];
@@ -886,6 +874,7 @@ function generateShot() {
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(ellipsoidModel.triangles),gl.STATIC_DRAW); // data in
 }
 
+// finds a random location on the surface of a sphere with center at x,y,z and radius
 function getSpotOnSphere(x, y, z, radius) {
     var u = Math.random();
     var v = Math.random();
@@ -897,8 +886,9 @@ function getSpotOnSphere(x, y, z, radius) {
     return [xx, yy, zz];
 }
 
+// finds the closest target for a spawning asteroid
 function getAsteroidTarget(spawnLocation) {
-    var closest = null;
+    var closest = [0,0,0];
     var dist = 100;
     var temp = 0;
     for (t in station_centers) {
@@ -912,6 +902,7 @@ function getAsteroidTarget(spawnLocation) {
     return closest;
 }
 
+// spawn an asteroid
 function generateAsteroid() {
     var spawnLocation = getSpotOnSphere(0, 0, 0, 10);
     var target = getAsteroidTarget(spawnLocation);
@@ -982,6 +973,7 @@ function updateAsteroids() {
     }
 }
 
+// create an explosion at a given location, increase size if boom
 function generateExplosion(location, boom) {
     var spawnLocation = location;
 
@@ -1071,6 +1063,7 @@ function animateExplosion(model) {
     }
 }
 
+// blow up the earth for game over
 function explodeEarth(earth) {
     if (exploding < 300) {
         console.log("Exploding");
@@ -1084,6 +1077,7 @@ function explodeEarth(earth) {
     }
 }
 
+// game over
 function gameOver(earth) {
 
     for (var a in asteroids) {
@@ -1104,98 +1098,112 @@ function gameOver(earth) {
 
 // look for collision between asteroids and other objects
 function checkCollision(a, b) {
-    var aRad = (a.a + a.b + a.c) / 3;
-    var bRad = (b.a + b.b + b.c) / 3;
-    var aPos = vec3.create();
+    if (a !== undefined && b !== undefined) {
+        var aRad = (a.a + a.b + a.c) / 3;
+        var bRad = (b.a + b.b + b.c) / 3;
+        var aPos = vec3.create();
 
-    vec3.add(aPos, a.center, a.translation);
-    var bPos = vec3.create();
-    vec3.add(bPos, b.center, b.translation);
-    var dist = vec3.distance(aPos, bPos);
+        vec3.add(aPos, a.center, a.translation);
+        var bPos = vec3.create();
+        vec3.add(bPos, b.center, b.translation);
+        var dist = vec3.distance(aPos, bPos);
 
-    if (dist < aRad + bRad) {
-        //spawn explosion and destroy asteroid, doesn't matter what asteroid collided with, always explodes
-        generateExplosion(vec3.add(vec3.create(), vec3.fromValues(a.x, a.y, a.z),
-            vec3.fromValues(a.translation[0], a.translation[1], a.translation[2])), false);
-        deleteModel(a);
-        //handle collision
-        if (b.tag == 'shot') {
-            // destroy asteroid and shot, give player points
-            //test *******apocalypse = true;
-            //test *******gameOver(b);
-            deleteModel(b);
-            score += 10;
-        } else if (b.tag == 'station') {
-            // destroy asteroid, damage station and destroy if life < 0 then weaken shield
-            // if last station destroyed, destroy shield as wells
-            b.health -= 5;
-            console.log("Station Hit! Health: " + b.health);
-            if (b.health == 0) {
-                base_limit--;
-                // reduce shield alpha by one to signify weakening
-                for (var o in inputEllipsoids) {
-                    if (inputEllipsoids[o].tag == 'shield') {
-                        inputEllipsoids[o].alpha -= 0.2;
-                    }
-                }
-                // if the destroyed center is highlighted, switch to next
-                if (b.id == current_center) {
-                    for (var s in stations) {
-                        if (stations[s].id > b.id) {
-                            stations[s].id--;
-                        }
-                    }
-                    current_center++;
-                    changeStation();
-                }
-                // remove the destroyed station
-                station_centers.splice(b.id, 1);
+        if (dist < aRad + bRad) {
+            //spawn explosion and destroy asteroid, doesn't matter what asteroid collided with, always explodes
+            generateExplosion(vec3.add(vec3.create(), vec3.fromValues(a.x, a.y, a.z),
+                vec3.fromValues(a.translation[0], a.translation[1], a.translation[2])), false);
+            deleteModel(a);
+            //handle collision
+            if (b.tag == 'shot') {
+                // destroy asteroid and shot, give player points
+                //test *******apocalypse = true;
+                //test *******gameOver(b);
                 deleteModel(b);
-                shield_level--;
-                console.log("Station down! Shield Power at: " + shield_level);
-                // destroy shield if no more stations
-                if (shield_level == 0) {
+                score += 10;
+                document.getElementById("score").innerHTML = "Score: " + score;
+                console.log("Score: " + score)
+            } else if (b.tag == 'station') {
+                // destroy asteroid, damage station and destroy if life < 0 then weaken shield
+                // if last station destroyed, destroy shield as wells
+                b.health -= 5;
+                if (b.css == 'station1') {
+                    document.getElementById("station1").innerHTML = "Station Alpha: " + b.health;
+                } else if (b.css == 'station2') {
+                    document.getElementById("station2").innerHTML = "Station Beta: " + b.health;
+                } else {
+                    document.getElementById("station3").innerHTML = "Station Charlie: " + b.health;
+                }
+                console.log("Station Hit! Health: " + b.health);
+                if (b.health == 0) {
+                    base_limit--;
+                    document.getElementById("shield").innerHTML = "Shield: " + shield_level;
+                    // reduce shield alpha by one to signify weakening
                     for (var o in inputEllipsoids) {
                         if (inputEllipsoids[o].tag == 'shield') {
-                            console.log("This is bad! The shields are down!");
-                            deleteModel(inputEllipsoids[o]);
+                            inputEllipsoids[o].alpha -= 0.2;
+                        }
+                    }
+                    // if the destroyed center is highlighted, switch to next
+                    if (b.id == current_center) {
+                        for (var s in stations) {
+                            if (stations[s].id > b.id) {
+                                stations[s].id--;
+                            }
+                        }
+                        current_center++;
+                        changeStation();
+                    }
+                    // remove the destroyed station
+                    station_centers.splice(b.id, 1);
+                    deleteModel(b);
+                    shield_level--;
+                    console.log("Station down! Shield Power at: " + shield_level);
+                    // destroy shield if no more stations
+                    if (shield_level == 0) {
+                        for (var o in inputEllipsoids) {
+                            if (inputEllipsoids[o].tag == 'shield') {
+                                console.log("This is bad! The shields are down!");
+                                deleteModel(inputEllipsoids[o]);
+                                break;
+                            }
+                        }
+                        deleteModel(highlight);
+                    }
+                }
+            } else if (b.tag == 'shield') {
+                // destroy asteroid, damage earth based on shield strength
+                earth_health -= 15 / shield_level;
+                document.getElementById("earth").innerHTML = "Earth: " + earth_health;
+                console.log("Shield hit, but holding strong! Health: " + earth_health);
+                if (earth_health <= 0) {
+                    for (var o in inputEllipsoids) {
+                        if (inputEllipsoids[o].tag == 'earth') {
+                            console.log("NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!");
+                            // handle game over
+                            gameOver(inputEllipsoids[o]);
                             break;
                         }
                     }
-                    deleteModel(highlight);
                 }
-            }
-        } else if (b.tag == 'shield') {
-            // destroy asteroid, damage earth based on shield strength
-            earth_health -= 15 / shield_level;
-            console.log("Shield hit, but holding strong! Health: " + earth_health);
-            if (earth_health <= 0) {
-                for (var o in inputEllipsoids) {
-                    if (inputEllipsoids[o].tag == 'earth') {
-                        console.log("NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!");
-                        // handle game over
-                        gameOver(inputEllipsoids[o]);
-                        break;
-                    }
+            } else if (b.tag == 'earth') {
+                // destroy asteroid, damage earth and destroy if life < 0
+                earth_health -= 15;
+                document.getElementById("earth").innerHTML = "Earth: " + earth_health;
+                console.log("Direct hit! Health: " + earth_health);
+                if (earth_health <= 0) {
+                    // handle game over
+                    console.log("NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!");
+                    gameOver(b);
                 }
-            }
-        } else if (b.tag == 'earth') {
-            // destroy asteroid, damage earth and destroy if life < 0
-            earth_health -= 15;
-            console.log("Direct hit! Health: " + earth_health);
-            if (earth_health <= 0) {
-                // handle game over
-                console.log("NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!");
-                gameOver(b);
-            }
-        } else if (b.tag == 'moon') {
-            b.health -= 5;
-            console.log("Oh no! The moon took damage!");
-            if (b.health <= 0) {
-                console.log("We lost the moon!");
-                generateExplosion(vec3.add(vec3.create(), vec3.fromValues(b.x, b.y, b.z),
-                    vec3.fromValues(b.translation[0], b.translation[1], b.translation[2])), true);
-                deleteModel(b);
+            } else if (b.tag == 'moon') {
+                b.health -= 5;
+                console.log("Oh no! The moon took damage!");
+                if (b.health <= 0) {
+                    console.log("We lost the moon!");
+                    generateExplosion(vec3.add(vec3.create(), vec3.fromValues(b.x, b.y, b.z),
+                        vec3.fromValues(b.translation[0], b.translation[1], b.translation[2])), true);
+                    deleteModel(b);
+                }
             }
         }
     }
@@ -1208,8 +1216,8 @@ function updateModels() {
             if (inputOpaque[m].tag == 'shot') {
                 // move forward along z some amount
                 // update longevity
-                vec3.add(inputOpaque[m].translation, inputOpaque[m].translation, vec3.scale(vec3.create(), inputOpaque[m].direction, 0.05));
-                inputOpaque[m].longevity++;
+                vec3.add(inputOpaque[m].translation, inputOpaque[m].translation, vec3.scale(vec3.create(), inputOpaque[m].direction, 0.01));
+                inputOpaque[m].longevity += 0.1;
                 if (inputOpaque[m].longevity > lifespan) {
                     // delete inputOpaque[m]
                     deleteModel(inputOpaque[m]);
@@ -1225,7 +1233,7 @@ function updateModels() {
             }
             if (inputOpaque[m].tag == 'moon') {
                 vec3.rotateY(inputOpaque[m].translation, inputOpaque[m].translation,
-                    vec3.fromValues(0,0,0), 1);
+                    vec3.fromValues(0,0,0), .001);
             }
         }
     }
@@ -1502,6 +1510,7 @@ function renderModelsSorted() {
     }
 }
 
+// restart the game
 function restart() {
     inputTriangles = []; // the triangle data as loaded from input files
     numTriangleSets = 0; // how many triangle sets in input scene
