@@ -80,6 +80,30 @@
     color: purple;
   }
 
+  .station1charge {
+    text-align: left;
+    margin-top: -95px;
+    margin-left: 175px;
+    font-weight: bold;
+    color: purple;
+  }
+
+  .station2charge {
+    text-align: left;
+    margin-top: 0px;
+    margin-left: 175px;
+    font-weight: bold;
+    color: purple;
+  }
+
+  .station3charge {
+    text-align: left;
+    margin-top: 0px;
+    margin-left: 175px;
+    font-weight: bold;
+    color: purple;
+  }
+
   .selected {
     text-align: center;
     margin-top: -70px;
@@ -92,6 +116,14 @@
     text-align: center;
     margin-top: 0px;
     font-size: 8pt;
+  }
+
+  .loading {
+    text-align: center;
+    margin-top: -625px;
+    font-weight: bold;
+    color: silver;
+    font-size: 30pt;
   }
 
   .page__content-container {

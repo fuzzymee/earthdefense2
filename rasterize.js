@@ -74,11 +74,12 @@ var lifespan = 50;
 var timer = 0;
 var spawn = 10;
 var current_center = 0;
-var recharge = 50;
+var recharge = 100;
 var station_centers = [
     [0, 0, 0.5, "Alpha", recharge, true],
     [-0.35, 0, -0.35, "Beta", recharge, true],
-    [0.35, 0, -0.35, "Charlie", recharge, true]
+    [0.35, 0, -0.35, "Charlie", recharge, true],
+    [0, 0, 0, "Earth"]
 ];
 var score = 0;
 var station_health = 10;
@@ -210,21 +211,23 @@ function handleKeyDown(event) {
                     generateShot();
                     station_centers[current_center][5] = false;
                     if (station_centers[current_center][3] == 'Alpha') {
-                        document.getElementById("station1charge").innerHTML = "Ready!";
+                        document.getElementById("station1charge").innerHTML = "Recharging!";
                     } else if (station_centers[current_center][3] == 'Beta') {
-                        document.getElementById("station2charge").innerHTML = "Ready!";
+                        document.getElementById("station2charge").innerHTML = "Recharging!";
                     } else if (station_centers[current_center][3] == 'Charlie') {
-                        document.getElementById("station3charge").innerHTML = "Ready!";
+                        document.getElementById("station3charge").innerHTML = "Recharging!";
                     }
                 }
                 break;
             case "KeyP":
-                if (loaded == textures.length) {
+                if (loaded >= textures.length) {
                     gl.clearColor(0.0, 0.0, 0.0, 1.0);
                     imageContext.clearRect(0,0,1100,650);
                     renderModelsSorted();
                     var snd = new Audio(TEXTURES_URL + "Game_Start.mp3");
                     snd.play();
+                    document.getElementById("loading").innerHTML = "";
+                    finishLoadingTextures();
                 }
                 break;
         } // end switch
@@ -232,6 +235,7 @@ function handleKeyDown(event) {
     switch (event.code) {
         case "KeyR":
             restart();
+            document.getElementById("loading").innerHTML = "";
             break;
     }
 } // end handleKeyDown
@@ -259,6 +263,11 @@ function setupTextures() {
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); // flip image
             //gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textures[t].image);
             loaded++;
+            console.log(loaded);
+            if (loaded == textures.length) {
+                document.getElementById("loading").innerHTML = "Ready to Go!";
+                loaded++;
+            }
         };
 
         var fullURL = TEXTURES_URL + textures[t].src;
@@ -1133,6 +1142,7 @@ function gameOver(earth) {
     deleteModel(highlight);
     apocalypse = true;
     paused = true;
+    document.getElementById("loading").innerHTML = "Game Over!";
 }
 
 // look for collision between asteroids and other objects
@@ -1209,6 +1219,16 @@ function checkCollision(a, b) {
                         }
                         deleteModel(highlight);
                     }
+                    if (b.css == 'station1') {
+                        document.getElementById("station1charge").innerHTML = "Destroyed!";
+                        document.getElementById("station1").innerHTML = "Station Alpha:"
+                    } else if (b.css == 'station2') {
+                        document.getElementById("station2charge").innerHTML = "Destroyed!";
+                        document.getElementById("station2").innerHTML = "Station Beta:"
+                    } else {
+                        document.getElementById("station3charge").innerHTML = "Destroyed!";
+                        document.getElementById("station3").innerHTML = "Station Charlie:"
+                    }
                 }
             } else if (b.tag == 'shield') {
                 // destroy asteroid, damage earth based on shield strength
@@ -1250,8 +1270,15 @@ function rechargeStations() {
     for (s in station_centers) {
         if (station_centers[s][4] < recharge) {
             station_centers[s][4]++;
-        } else {
+        } else if (station_centers[s][4] == recharge) {
             station_centers[s][5] = true;
+            if (station_centers[s][3] == 'Alpha') {
+                document.getElementById("station1charge").innerHTML = "Ready to Fire!";
+            } else if (station_centers[s][3] == 'Beta') {
+                document.getElementById("station2charge").innerHTML = "Ready to Fire!";
+            } else if (station_centers[s][3] == 'Charlie') {
+                document.getElementById("station3charge").innerHTML = "Ready to Fire!";
+            }
         }
     }
 }
@@ -1308,6 +1335,7 @@ function renderModelsSorted() {
 
     if (loaded == textures.length) {
         finishLoadingTextures();
+        document.getElementById("loading").innerHTML = "Ready to Go!";
         loaded++;
     }
 
@@ -1588,9 +1616,9 @@ function restart() {
     timer = 0;
     spawn = 10;
     station_centers = [
-        [0, 0, 0.5, "Alpha", 50],
-        [-0.35, 0, -0.35, "Beta", 50],
-        [0.35, 0, -0.35, "Charlie", 50]
+        [0, 0, 0.5, "Alpha", 50, true],
+        [-0.35, 0, -0.35, "Beta", 50, true],
+        [0.35, 0, -0.35, "Charlie", 50, true]
     ];
     current_center = 0;
 
@@ -1604,13 +1632,16 @@ function restart() {
     paused = false;
     apocalypse = false;
 
-    document.getElementById("station1").innerHTML = "Station Alpha: 10    Shot: Ready";
-    document.getElementById("station2").innerHTML = "Station Beta: 10    Shot: Ready";
-    document.getElementById("station3").innerHTML = "Station Charlie: 10    Shot: Ready";
+    document.getElementById("station1").innerHTML = "Station Alpha: 10";
+    document.getElementById("station2").innerHTML = "Station Beta: 10";
+    document.getElementById("station3").innerHTML = "Station Charlie: 10";
     document.getElementById("score").innerHTML = "Score: " + score;
     document.getElementById("shield").innerHTML = "Shield: " + shield_level;
     document.getElementById("earth").innerHTML = "Earth: " + earth_health;
     document.getElementById("selected").innerHTML = "Selected Station: Alpha";
+    document.getElementById("station1charge").innerHTML = "Ready to Fire!";
+    document.getElementById("station2charge").innerHTML = "Ready to Fire!";
+    document.getElementById("station3charge").innerHTML = "Ready to Fire!";
     
     loadModels();
     var snd = new Audio(TEXTURES_URL + "Game_Start.mp3");
@@ -1624,7 +1655,10 @@ function main() {
     setupTextures(); // load textures
     loadModels(); // load in the models from tri file
     var snd2 = new Audio(TEXTURES_URL + "Game_Music.mp3");
-    snd2.currentTime=0;
+    snd2.addEventListener('ended', function() {
+        this.currentTime = 0;
+        this.play();
+    }, false);
     snd2.play();
     setupShaders(); // setup the webGL shaders
     
