@@ -1,11 +1,11 @@
 [
-{"x": 0.0, "y": 0.0, "z": 0.0, "a":0.45, "b":0.45, "c":0.45, "ambient": [0.7,0.7,0.7], "diffuse": [0.0,0.0,0.6], "specular": [0.3,0.3,0.3], "n":5, "alpha": 1, "texture": "map.png", "tag": "earth", "collider": true},
+{"x": 0.0, "y": 0.0, "z": 0.0, "a":0.45, "b":0.45, "c":0.45, "ambient": [0.7,0.7,0.7], "diffuse": [0.0,0.0,0.6], "specular": [0.3,0.3,0.3], "n":5, "alpha": 1, "texture": "mars.jpg", "tag": "earth", "collider": true},
 {"x": 2.0, "y": 4.0, "z": 4.0, "a":0.1, "b":0.1, "c":0.1, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.0,0.6], "specular": [0.9,0.9,0.9], "n":7, "alpha": 0.8, "texture": "sun.jpg", "tag": "sun", "collider": false},
 {"x": 0.0, "y": 0.0, "z": 0.0, "a":10, "b":10, "c":10, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 1, "texture": "stars.png", "tag": "universe", "collider": false},
 {"x": 0.0, "y": 0.0, "z": 0.5, "a":0.05, "b":0.05, "c":0.05, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 1, "texture": "deathstar.jpg", "tag": "station", "collider": true, "id": 0, "health": 10, "css": "station1"},
 {"x": -0.35, "y": 0.0, "z": -0.35, "a":0.045, "b":0.045, "c":0.045, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 1, "texture": "deathstar.jpg", "tag": "station", "collider": true, "id": 1, "health": 10, "css": "station2"},
 {"x": 0.35, "y": 0.0, "z": -0.35, "a":0.045, "b":0.045, "c":0.045, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 1, "texture": "deathstar.jpg", "tag": "station", "collider": true, "id": 2, "health": 10, "css": "station3"},
-{"x": 0.0, "y": 0.0, "z": 0.0, "a":0.5, "b":0.5, "c":0.5, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 0.6, "texture": "shield.png", "tag": "shield", "collider": true},
+{"x": 0.0, "y": 0.0, "z": 0.0, "a":0.5, "b":0.5, "c":0.5, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 0.6, "texture": "red.jpg", "tag": "shield", "collider": true},
 {"x": 0.0, "y": 0.0, "z": 0.0, "a":0.075, "b":0.075, "c":0.075, "ambient": [0.7,0.7,0.7], "diffuse": [0.6,0.6,0.0], "specular": [0.3,0.3,0.3], "n":9, "alpha": 1.0, "texture": "moon.jpg", "tag": "moon", "collider": true, "health": 15},
 {"x": 0.0, "y": 0.0, "z": 0.0, "a":0.06, "b":0.06, "c":0.06, "ambient": [0.7,0.7,0.7], "diffuse": [0.9,0.9,0.9], "specular": [0.3,0.3,0.3], "n":9, "alpha": 0.3, "texture": "highlight.png", "tag": "highlight", "collider": false}
 ]
