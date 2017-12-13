@@ -263,7 +263,6 @@ function setupTextures() {
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); // flip image
             //gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textures[t].image);
             loaded++;
-            console.log(loaded);
             if (loaded == textures.length) {
                 document.getElementById("loading").innerHTML = "Ready to Go!";
                 loaded++;
@@ -1098,20 +1097,9 @@ function animateExplosion(model) {
     }
 }
 
-function endgameScreen() {
-    var bkgdImage = new Image(); 
-    bkgdImage.crossOrigin = "Anonymous";
-    bkgdImage.src = TEXTURES_URL + "Game_End.jpg";
-    bkgdImage.onload = function(){
-        var iw = bkgdImage.width, ih = bkgdImage.height;
-        imageContext.drawImage(bkgdImage,0,0,iw,ih,0,0,1150,650);  
-    }
-}
-
 // blow up the earth for game over
 function explodeEarth(earth) {
     if (exploding < 300) {
-        console.log("Exploding");
         var location = getSpotOnSphere(earth.x, earth.y, earth.z, earth.a);
         generateExplosion(location, false);
     } else if (exploding == 300) {
@@ -1119,7 +1107,6 @@ function explodeEarth(earth) {
         generateExplosion(location, true);
     } else {
         deleteModel(earth);
-        endgameScreen();
     }
 }
 
@@ -1232,7 +1219,6 @@ function checkCollision(a, b) {
                 // destroy asteroid, damage earth based on shield strength
                 earth_health -= 15 / shield_level;
                 document.getElementById("earth").innerHTML = "Earth: " + earth_health;
-                console.log("Shield hit, but holding strong! Health: " + earth_health);
                 if (earth_health <= 0) {
                     for (var o in inputEllipsoids) {
                         if (inputEllipsoids[o].tag == 'earth') {
@@ -1246,7 +1232,6 @@ function checkCollision(a, b) {
                 // destroy asteroid, damage earth and destroy if life < 0
                 earth_health -= 15;
                 document.getElementById("earth").innerHTML = "Earth: " + earth_health;
-                console.log("Direct hit! Health: " + earth_health);
                 if (earth_health <= 0) {
                     // handle game over
                     gameOver(b);
@@ -1265,17 +1250,39 @@ function checkCollision(a, b) {
 
 // recharge stations that need to shoot
 function rechargeStations() {
+    var curStation;
     for (s in station_centers) {
         if (station_centers[s][4] < recharge) {
             station_centers[s][4]++;
         } else if (station_centers[s][4] == recharge) {
             station_centers[s][5] = true;
             if (station_centers[s][3] == 'Alpha') {
-                document.getElementById("station1charge").innerHTML = "Ready to Fire!";
+                for (var s in stations) {
+                    if (stations[s].css == 'station1') {
+                        curStation = stations[s];
+                    }
+                }
+                if (curStation.health > 0) {
+                    document.getElementById("station1charge").innerHTML = "Ready to Fire!";
+                }
             } else if (station_centers[s][3] == 'Bravo') {
-                document.getElementById("station2charge").innerHTML = "Ready to Fire!";
+                for (var s in stations) {
+                    if (stations[s].css == 'station2') {
+                        curStation = stations[s];
+                    }
+                }
+                if (curStation.health > 0) {
+                    document.getElementById("station2charge").innerHTML = "Ready to Fire!";
+                }
             } else if (station_centers[s][3] == 'Charlie') {
-                document.getElementById("station3charge").innerHTML = "Ready to Fire!";
+                for (var s in stations) {
+                    if (stations[s].css == 'station3') {
+                        curStation = stations[s];
+                    }
+                }
+                if (curStation.health > 0) {
+                    document.getElementById("station3charge").innerHTML = "Ready to Fire!";
+                }
             }
         }
     }
