@@ -77,7 +77,7 @@ var current_center = 0;
 var recharge = 100;
 var station_centers = [
     [0, 0, 0.5, "Alpha", recharge, true],
-    [-0.35, 0, -0.35, "Beta", recharge, true],
+    [-0.35, 0, -0.35, "Bravo", recharge, true],
     [0.35, 0, -0.35, "Charlie", recharge, true],
     [0, 0, 0, "Earth"]
 ];
@@ -212,7 +212,7 @@ function handleKeyDown(event) {
                     station_centers[current_center][5] = false;
                     if (station_centers[current_center][3] == 'Alpha') {
                         document.getElementById("station1charge").innerHTML = "Recharging!";
-                    } else if (station_centers[current_center][3] == 'Beta') {
+                    } else if (station_centers[current_center][3] == 'Bravo') {
                         document.getElementById("station2charge").innerHTML = "Recharging!";
                     } else if (station_centers[current_center][3] == 'Charlie') {
                         document.getElementById("station3charge").innerHTML = "Recharging!";
@@ -357,14 +357,12 @@ function makeEllipsoid(currEllipsoid,numLongSteps) {
             var latLimitAngle = angleIncr * (Math.floor(numLongSteps/4)-1); // start/end lat angle
             var latRadius, latY; // radius and Y at current latitude
             var count = 0;
-            for (var latAngle=-latLimitAngle; latAngle<=latLimitAngle; latAngle+=angleIncr) {
+            for (var latAngle = -latLimitAngle; latAngle <= latLimitAngle; latAngle += angleIncr) {
                 count = 0;
                 latRadius = Math.cos(latAngle); // radius of current latitude
                 latY = Math.sin(latAngle); // height at current latitude
-                for (var longAngle=0; longAngle<2*Math.PI; longAngle+=angleIncr) {// for each long
+                for (var longAngle = 0; longAngle < 2 * Math.PI; longAngle += angleIncr) {// for each long
                     ellipsoidVertices.push(latRadius*Math.sin(longAngle),latY,latRadius*Math.cos(longAngle));
-                    //ellipsoidTextures.push(Math.atan2(latRadius*Math.sin(longAngle), latRadius*Math.cos(longAngle)) / (2*Math.PI) + 0.5,
-                    //    latY * 0.5 + 0.5);
                     ellipsoidTextures.push(longAngle/(2*Math.PI), /*(latLimitAngle + latAngle) / (2 * latLimitAngle));//*/latAngle/Math.PI + 0.5);
                 }
                 ellipsoidVertices.push(latRadius*Math.sin(0),latY,latRadius*Math.cos(0));
@@ -399,7 +397,7 @@ function makeEllipsoid(currEllipsoid,numLongSteps) {
                         
             // make triangles, from south pole to middle latitudes to north pole
             var ellipsoidTriangles = []; // triangles to return
-            for (var whichLong=1; whichLong<numLongSteps; whichLong++) // south pole
+            for (var whichLong=1; whichLong<=numLongSteps; whichLong++) // south pole
                 ellipsoidTriangles.push(0,whichLong,whichLong+1);
             ellipsoidTriangles.push(0,numLongSteps,1); // longitude wrap tri
             var llVertex; // lower left vertex in the current quad
@@ -412,7 +410,7 @@ function makeEllipsoid(currEllipsoid,numLongSteps) {
                 ellipsoidTriangles.push(llVertex+1,llVertex+numLongSteps+1,llVertex+2);
                 ellipsoidTriangles.push(llVertex+1,llVertex+2,llVertex-numLongSteps+2);
             } // end for each latitude
-            for (var whichLong=llVertex+2; whichLong<llVertex+numLongSteps+1; whichLong++) // north pole
+            for (var whichLong = llVertex; whichLong < llVertex + numLongSteps + 1; whichLong++) // north pole
                 ellipsoidTriangles.push(whichLong,ellipsoidVertices.length/3-1,whichLong+1);
             ellipsoidTriangles.push(ellipsoidVertices.length/3-2,ellipsoidVertices.length/3-1, ellipsoidVertices.length/3-numLongSteps-1); // longitude wrap
         } // end if good number longitude steps
@@ -1177,7 +1175,7 @@ function checkCollision(a, b) {
                 if (b.css == 'station1') {
                     document.getElementById("station1").innerHTML = "Station Alpha: " + b.health;
                 } else if (b.css == 'station2') {
-                    document.getElementById("station2").innerHTML = "Station Beta: " + b.health;
+                    document.getElementById("station2").innerHTML = "Station Bravo: " + b.health;
                 } else {
                     document.getElementById("station3").innerHTML = "Station Charlie: " + b.health;
                 }
@@ -1224,7 +1222,7 @@ function checkCollision(a, b) {
                         document.getElementById("station1").innerHTML = "Station Alpha:"
                     } else if (b.css == 'station2') {
                         document.getElementById("station2charge").innerHTML = "Destroyed!";
-                        document.getElementById("station2").innerHTML = "Station Beta:"
+                        document.getElementById("station2").innerHTML = "Station Bravo:"
                     } else {
                         document.getElementById("station3charge").innerHTML = "Destroyed!";
                         document.getElementById("station3").innerHTML = "Station Charlie:"
@@ -1274,7 +1272,7 @@ function rechargeStations() {
             station_centers[s][5] = true;
             if (station_centers[s][3] == 'Alpha') {
                 document.getElementById("station1charge").innerHTML = "Ready to Fire!";
-            } else if (station_centers[s][3] == 'Beta') {
+            } else if (station_centers[s][3] == 'Bravo') {
                 document.getElementById("station2charge").innerHTML = "Ready to Fire!";
             } else if (station_centers[s][3] == 'Charlie') {
                 document.getElementById("station3charge").innerHTML = "Ready to Fire!";
@@ -1617,7 +1615,7 @@ function restart() {
     spawn = 10;
     station_centers = [
         [0, 0, 0.5, "Alpha", 50, true],
-        [-0.35, 0, -0.35, "Beta", 50, true],
+        [-0.35, 0, -0.35, "Bravo", 50, true],
         [0.35, 0, -0.35, "Charlie", 50, true]
     ];
     current_center = 0;
@@ -1633,7 +1631,7 @@ function restart() {
     apocalypse = false;
 
     document.getElementById("station1").innerHTML = "Station Alpha: 10";
-    document.getElementById("station2").innerHTML = "Station Beta: 10";
+    document.getElementById("station2").innerHTML = "Station Bravo: 10";
     document.getElementById("station3").innerHTML = "Station Charlie: 10";
     document.getElementById("score").innerHTML = "Score: " + score;
     document.getElementById("shield").innerHTML = "Shield: " + shield_level;
