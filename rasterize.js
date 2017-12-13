@@ -397,7 +397,7 @@ function makeEllipsoid(currEllipsoid,numLongSteps) {
                         
             // make triangles, from south pole to middle latitudes to north pole
             var ellipsoidTriangles = []; // triangles to return
-            for (var whichLong=1; whichLong<=numLongSteps; whichLong++) // south pole
+            for (var whichLong=1; whichLong<=numLongSteps + 1; whichLong++) // south pole
                 ellipsoidTriangles.push(0,whichLong,whichLong+1);
             ellipsoidTriangles.push(0,numLongSteps,1); // longitude wrap tri
             var llVertex; // lower left vertex in the current quad
